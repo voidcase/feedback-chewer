@@ -1,4 +1,4 @@
-import pandas as pd #using pandas.io (recommended in sklearn)
+import pandas as pd
 import numpy as np
 import util
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -19,12 +19,12 @@ def data_extract():
         tfidf_frame = tfidf(df[header],name)
         df = pd.concat([df.drop([header], axis=1) , tfidf_frame], axis = 1)
 
-    df['Experiment start'] = parse_date(df['Experiment start'])
-    df['Experiment end'] = parse_date(df['Experiment end'])
-    df['Report submitted'] = parse_date(df['Report submitted'])
+    dates = ['Experiment start', 'Experiment end','Report submitted']
+    for header in dates:
+        df[header] = parse_date(df[header])
+
     min_max_scaler = preprocessing.MinMaxScaler()
-    df[['Experiment start', 'Experiment end','Report submitted']] = min_max_scaler.fit_transform(df[['Experiment start','Experiment end', 'Report submitted']])
-    print(df[:10])
+    df[dates] = min_max_scaler.fit_transform(df[dates])
     return df
 
 def tfidf(column, columname):
