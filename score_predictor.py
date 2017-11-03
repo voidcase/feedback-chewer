@@ -1,29 +1,34 @@
 import csv
 from sklearn import linear_model
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_val_score, train_test_split
 import data_extractor, util
+from pprint import pprint
 
 def get_int_column(col):
     with open('dataset.csv') as csvfile:
         reader = csv.DictReader(csvfile)
         return [int(row[col]) for row in reader]
 
-def train_on(scoretype='Overall'):
-    if scoretype not in util.SCORE_TYPES:
-        return None
-    clf = linear_model.LogisticRegression()
-    X = None # TODO: get features
-    y = get_int_column(scoretype)
-    return clf.fit(X, y)
-
 def print_cross_val_scores(scoretype='Overall'):
     if scoretype not in util.SCORE_TYPES: return None
-    clf = linear_model.LogisticRegression()
+    clf = linear_model.LinearRegression()
     X = data_extractor.data_extract()
     y = get_int_column(scoretype)
     scores = cross_val_score(clf, X, y)
     print(scores)
 
+def eval():
+    X_all = data_extractor.data_extract()
+    y_all = get_int_column('Overall')
+    X_train, X_test, y_train, y_test = train_test_split(X_all, y_all, test_size=0.1)
+    model = linear_model.LinearRegression().fit(X_train, y_train)
+    pprint(X_test)
+    print(y_test)
+    print(model.predict(X_test))
+    return model.score(X_test, y_test)
+
+
+
 if __name__ == '__main__':
-    print_cross_val_scores()
+    print(eval())
 
