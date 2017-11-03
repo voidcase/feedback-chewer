@@ -171,3 +171,6 @@ fabric.properties
 
 .idea/feedback-chewer.iml
 .idea/misc.xml
+.~lock.*
+.*.swp
+.swp
