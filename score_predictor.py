@@ -23,7 +23,7 @@ def eval():
     y_all = get_int_column('Overall')
     X_train, X_test, y_train, y_test = train_test_split(X_all, y_all, test_size=0.1)
     model = linear_model.LinearRegression().fit(X_train, y_train)
-    plt.plot(y_test,model.predict(X_test))
+    plt.plot(y_test,model.predict(X_test), 'bo')
     plt.show()
     return model.score(X_test, y_test)
 
