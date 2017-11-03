@@ -36,8 +36,6 @@ def parse_date(column):
     column = [t.value // 10 ** 9 for t in column]
     return column
 
-data_extract()
-
 
 
 
