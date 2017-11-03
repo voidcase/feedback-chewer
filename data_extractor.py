@@ -2,9 +2,10 @@ import pandas as pd #using pandas.io (recommended in sklearn)
 import numpy as np
 import util
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn import preprocessing
 
 def data_extract():
-    df = pd.read_csv('dataset.csv').drop(util.SCORE_TYPES, axis = 1)
+    df = pd.read_csv('dataset.csv').drop(util.SCORE_TYPES + ['Proposal'], axis = 1)
     df = df.fillna('')
 
     for header in ['Beamline', 'Department', 'User Affiliation']:
@@ -21,7 +22,8 @@ def data_extract():
     df['Experiment start'] = parse_date(df['Experiment start'])
     df['Experiment end'] = parse_date(df['Experiment end'])
     df['Report submitted'] = parse_date(df['Report submitted'])
-    return df
+    df_scaled = preprocessing.scale(df)
+    return df_scaled
 
 def tfidf(column, columname):
     values = column.values
@@ -36,3 +38,5 @@ def parse_date(column):
     column = pd.to_datetime(column)
     column = [t.value // 10 ** 9 for t in column]
     return column
+
+data_extract()
