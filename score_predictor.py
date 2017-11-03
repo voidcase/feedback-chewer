@@ -1,17 +1,7 @@
 import csv
 from sklearn import linear_model
 from sklearn.model_selection import cross_val_score
-import data_extractor
-
-SCORE_TYPES = [
-    'Overall',
-    'Scientific support',
-    'Technical support',
-    'Beamline hardware',
-    'Beamline software',
-    'Machine operation',
-    'DUO'
-    ]
+import data_extractor, util
 
 def get_int_column(col):
     with open('dataset.csv') as csvfile:
@@ -19,7 +9,7 @@ def get_int_column(col):
         return [int(row[col]) for row in reader]
 
 def train_on(scoretype='Overall'):
-    if scoretype not in SCORE_TYPES:
+    if scoretype not in util.SCORE_TYPES:
         return None
     clf = linear_model.LogisticRegression()
     X = None # TODO: get features
@@ -27,7 +17,7 @@ def train_on(scoretype='Overall'):
     return clf.fit(X, y)
 
 def print_cross_val_scores(scoretype='Overall'):
-    if scoretype not in SCORE_TYPES: return None
+    if scoretype not in util.SCORE_TYPES: return None
     clf = linear_model.LogisticRegression()
     X = data_extractor.data_extract()
     y = get_int_column(scoretype)

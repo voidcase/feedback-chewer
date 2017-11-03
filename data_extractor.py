@@ -1,9 +1,10 @@
 import pandas as pd #using pandas.io (recommended in sklearn)
 import numpy as np
+import util
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 def data_extract():
-    df = pd.read_csv('dataset.csv').drop(['Proposal'], axis = 1)
+    df = pd.read_csv('dataset.csv').drop(util.SCORE_TYPES, axis = 1)
     df = df.fillna('')
 
     for header in ['Beamline', 'Department', 'User Affiliation']:
@@ -35,14 +36,3 @@ def parse_date(column):
     column = pd.to_datetime(column)
     column = [t.value // 10 ** 9 for t in column]
     return column
-
-
-
-
-
-
-
-
-
-
-
