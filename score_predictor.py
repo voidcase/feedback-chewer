@@ -2,6 +2,7 @@ import csv
 from sklearn import linear_model
 from sklearn.model_selection import cross_val_score, train_test_split
 import data_extractor, util
+import matplotlib.pyplot as plt
 from pprint import pprint
 
 def get_int_column(col):
@@ -22,13 +23,13 @@ def eval():
     y_all = get_int_column('Overall')
     X_train, X_test, y_train, y_test = train_test_split(X_all, y_all, test_size=0.1)
     model = linear_model.LinearRegression().fit(X_train, y_train)
-    pprint(X_test)
-    print(y_test)
-    print(model.predict(X_test))
+    plt.plot(y_test,model.predict(X_test))
+    plt.show()
     return model.score(X_test, y_test)
 
 
 
 if __name__ == '__main__':
     print(eval())
+
 
