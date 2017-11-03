@@ -38,5 +38,3 @@ def parse_date(column):
     column = pd.to_datetime(column)
     column = [t.value // 10 ** 9 for t in column]
     return column
-
-data_extract()
