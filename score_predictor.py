@@ -25,7 +25,7 @@ def eval():
     model = linear_model.LinearRegression().fit(X_train, y_train)
     coefficients = model.coef_
     zipped = zip(coefficients,list(X_train))
-    pprint(sorted(list(zipped))[:10])
+    pprint(sorted(list(zipped))[-10:])
 
     #plt.plot(y_test,model.predict(X_test), 'bo')
     return model.score(X_test, y_test)

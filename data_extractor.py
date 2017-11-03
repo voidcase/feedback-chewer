@@ -25,10 +25,13 @@ def data_extract():
         df[header] = parse_date(df[header])
 
     min_max_scaler = preprocessing.MinMaxScaler()
-    variance_scaler = VarianceThreshold(0.005)
+    variance_scaler = VarianceThreshold(0.05)
     df[dates] = min_max_scaler.fit_transform(df[dates])
-    df[dates] = variance_scaler.fit_transform(df[dates])
-    print(df[:10])
+    variance_scaler.fit(df)
+
+    remove = variance_scaler.get_support()
+    remove_indices = [x for x in range(len(remove)) if remove[x]]
+    df = df.iloc[:, lambda df: remove_indices]
     return df
 
 def tfidf(column, columname):
