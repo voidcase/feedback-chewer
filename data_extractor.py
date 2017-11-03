@@ -22,8 +22,10 @@ def data_extract():
     df['Experiment start'] = parse_date(df['Experiment start'])
     df['Experiment end'] = parse_date(df['Experiment end'])
     df['Report submitted'] = parse_date(df['Report submitted'])
-    df_scaled = preprocessing.scale(df)
-    return df_scaled
+    min_max_scaler = preprocessing.MinMaxScaler()
+    df[['Experiment start', 'Experiment end','Report submitted']] = min_max_scaler.fit_transform(df[['Experiment start','Experiment end', 'Report submitted']])
+    print(df[:10])
+    return df
 
 def tfidf(column, columname):
     values = column.values
@@ -38,3 +40,5 @@ def parse_date(column):
     column = pd.to_datetime(column)
     column = [t.value // 10 ** 9 for t in column]
     return column
+
+data_extract()
