@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import util
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_selection import VarianceThreshold
 from sklearn import preprocessing
 
 def data_extract():
@@ -9,8 +10,8 @@ def data_extract():
     df = df.fillna('')
 
     for header in ['Beamline', 'Department', 'User Affiliation']:
-        dummies = pd.get_dummies(df[header])
-        df = pd.concat([df.drop([header], axis=1) ,dummies], axis = 1)
+       dummies = pd.get_dummies(df[header])
+       df = pd.concat([df.drop([header], axis=1) ,dummies], axis = 1)
 
     for header, name in [('Experiment comments', '_ec'),
                          ('Infrastructure comment', '_ic'),
@@ -24,7 +25,10 @@ def data_extract():
         df[header] = parse_date(df[header])
 
     min_max_scaler = preprocessing.MinMaxScaler()
+    variance_scaler = VarianceThreshold(0.005)
     df[dates] = min_max_scaler.fit_transform(df[dates])
+    df[dates] = variance_scaler.fit_transform(df[dates])
+    print(df[:10])
     return df
 
 def tfidf(column, columname):
