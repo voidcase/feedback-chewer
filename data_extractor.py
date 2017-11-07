@@ -31,7 +31,10 @@ def data_extract():
 
     remove = variance_scaler.get_support()
     remove_indices = [x for x in range(len(remove)) if remove[x]]
-    df = df.iloc[:, lambda df: remove_indices]
+    for i in remove_indices:
+        print('dropped',df.columns[i])
+        df.drop(df.columns[i], axis=1)
+    # df = df.iloc[:, lambda df: remove_indices]
     return df
 
 def tfidf(column, columname):
