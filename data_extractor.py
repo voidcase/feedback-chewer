@@ -5,22 +5,23 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import VarianceThreshold
 from sklearn import preprocessing
 
+
 def data_extract():
-    df = pd.read_csv('dataset.csv').drop(util.SCORE_TYPES + ['Proposal'], axis = 1)
+    df = pd.read_csv('dataset.csv').drop(util.SCORE_TYPES + ['Proposal'], axis=1)
     df = df.fillna('')
 
     for header in ['Beamline', 'Department', 'User Affiliation']:
-       dummies = pd.get_dummies(df[header])
-       df = pd.concat([df.drop([header], axis=1) ,dummies], axis = 1)
+        dummies = pd.get_dummies(df[header])
+        df = pd.concat([df.drop([header], axis=1), dummies], axis=1)
 
     for header, name in [('Experiment comments', '_ec'),
                          ('Infrastructure comment', '_ic'),
                          ('Overall comments', '_oc'),
                          ('Remarks', '_r')]:
-        tfidf_frame = tfidf(df[header],name)
-        df = pd.concat([df.drop([header], axis=1) , tfidf_frame], axis = 1)
+        tfidf_frame = tfidf(df[header], name)
+        df = pd.concat([df.drop([header], axis=1), tfidf_frame], axis=1)
 
-    dates = ['Experiment start', 'Experiment end','Report submitted']
+    dates = ['Experiment start', 'Experiment end', 'Report submitted']
     for header in dates:
         df[header] = parse_date(df[header])
 
@@ -32,10 +33,11 @@ def data_extract():
     remove = variance_scaler.get_support()
     remove_indices = [x for x in range(len(remove)) if remove[x]]
     for i in remove_indices:
-        print('dropped',df.columns[i])
+        print('dropped', df.columns[i])
         df.drop(df.columns[i], axis=1)
     # df = df.iloc[:, lambda df: remove_indices]
     return df
+
 
 def tfidf(column, columname):
     values = column.values
@@ -43,12 +45,14 @@ def tfidf(column, columname):
     tfidf_matrix = vectorizer.fit_transform(values).toarray()
     featurenames = np.asarray(vectorizer.get_feature_names())
     tfidf_frame = pd.DataFrame(tfidf_matrix, columns=featurenames)
-    tfidf_frame.rename(columns=lambda x: x+columname, inplace=True)
+    tfidf_frame.rename(columns=lambda x: x + columname, inplace=True)
     return tfidf_frame
+
 
 def parse_date(column):
     column = pd.to_datetime(column)
     column = [t.value // 10 ** 9 for t in column]
     return column
+
 
 data_extract()
