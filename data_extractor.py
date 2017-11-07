@@ -10,18 +10,15 @@ def data_extract():
     df = pd.read_csv('dataset.csv').drop(util.SCORE_TYPES + ['Proposal'], axis=1)
     df = df.fillna('')
 
-    for header in ['Beamline', 'Department', 'User Affiliation']:
+    for header in util.NAME_HEADERS:
         dummies = pd.get_dummies(df[header])
         df = pd.concat([df.drop([header], axis=1), dummies], axis=1)
 
-    for header, name in [('Experiment comments', '_ec'),
-                         ('Infrastructure comment', '_ic'),
-                         ('Overall comments', '_oc'),
-                         ('Remarks', '_r')]:
-        tfidf_frame = tfidf(df[header], name)
+    for header, suffix in util.TEXT_HEADERS_AND_SUFFIXES:
+        tfidf_frame = tfidf(df[header], suffix)
         df = pd.concat([df.drop([header], axis=1), tfidf_frame], axis=1)
 
-    dates = ['Experiment start', 'Experiment end', 'Report submitted']
+    dates = util.DATE_HEADERS
     for header in dates:
         df[header] = parse_date(df[header])
 
@@ -53,6 +50,3 @@ def parse_date(column):
     column = pd.to_datetime(column)
     column = [t.value // 10 ** 9 for t in column]
     return column
-
-
-data_extract()
