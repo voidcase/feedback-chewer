@@ -15,3 +15,5 @@ TEXT_HEADERS_AND_SUFFIXES = [
     ('Overall comments', '_oc'),
     ('Remarks', '_r')
 ]
+
+DROPTEST = ['Department', 'User Affiliation', 'Proposal'] + DATE_HEADERS + SCORE_TYPES

@@ -7,24 +7,29 @@ from sklearn import preprocessing
 
 
 def data_extract():
-    df = pd.read_csv('dataset.csv').drop(util.SCORE_TYPES + ['Proposal'], axis=1)
+    df = pd.read_csv('dataset.csv').drop(util.DROPTEST, axis=1)
     df = df.fillna('')
 
     for header in util.NAME_HEADERS:
-        dummies = pd.get_dummies(df[header])
-        df = pd.concat([df.drop([header], axis=1), dummies], axis=1)
+        if header in df:
+            dummies = pd.get_dummies(df[header])
+            df = pd.concat([df.drop([header], axis=1), dummies], axis=1)
 
     for header, suffix in util.TEXT_HEADERS_AND_SUFFIXES:
-        tfidf_frame = tfidf(df[header], suffix)
-        df = pd.concat([df.drop([header], axis=1), tfidf_frame], axis=1)
+        if header in df:
+            tfidf_frame = tfidf(df[header], suffix)
+            df = pd.concat([df.drop([header], axis=1), tfidf_frame], axis=1)
 
-    dates = util.DATE_HEADERS
-    for header in dates:
-        df[header] = parse_date(df[header])
+    for header in util.DATE_HEADERS:
+        if header in df:
+            df[header] = parse_date(df[header])
 
     min_max_scaler = preprocessing.MinMaxScaler()
-    variance_scaler = VarianceThreshold(0.05)
-    df[dates] = min_max_scaler.fit_transform(df[dates])
+    variance_scaler = VarianceThreshold(0.005)
+
+    kept_dates = list(set(util.DATE_HEADERS) - set(util.DROPTEST))
+    if kept_dates:
+        df[kept_dates] = min_max_scaler.fit_transform(df[kept_dates])
     variance_scaler.fit(df)
 
     remove = variance_scaler.get_support()
@@ -32,7 +37,7 @@ def data_extract():
     for i in remove_indices:
         print('dropped', df.columns[i])
         df.drop(df.columns[i], axis=1)
-    # df = df.iloc[:, lambda df: remove_indices]
+    #df = df.iloc[:, lambda df: remove_indices]
     return df
 
 
