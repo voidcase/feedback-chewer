@@ -48,8 +48,6 @@ def data_extract():
     retain = variance_scaler.get_support()
     droppable_headers = [df.columns[x] for x, y in enumerate(retain) if not y]
     df = df.drop(droppable_headers, axis=1)
-    # df = df.iloc[:, lambda df: retain_indices]
-    print("df after drops:",df.columns)
     return df
 
 def get_all_data():
