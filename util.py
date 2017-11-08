@@ -16,3 +16,4 @@ TEXT_HEADERS_AND_SUFFIXES = [
     ('Remarks', '_r')
 ]
 DATASET = 'dataset.csv'
+DROPTEST = ['Department', 'User Affiliation', 'Proposal'] + DATE_HEADERS + SCORE_TYPES
