@@ -15,3 +15,4 @@ TEXT_HEADERS_AND_SUFFIXES = [
     ('Overall comments', '_oc'),
     ('Remarks', '_r')
 ]
+DATASET = 'dataset.csv'
