@@ -7,7 +7,7 @@ from sklearn import preprocessing
 
 
 def data_extract():
-    df = pd.read_csv(util.DATASET).drop(util.SCORE_TYPES + ['Proposal'], axis=1)
+    df = pd.read_csv(util.DATASET).drop(util.DROPTEST, axis=1)
     df = df.fillna('')
 
     for header in util.NAME_HEADERS:
@@ -15,17 +15,30 @@ def data_extract():
             dummies = pd.get_dummies(df[header])
             df = pd.concat([df.drop([header], axis=1), dummies], axis=1)
 
-    for header, suffix in util.TEXT_HEADERS_AND_SUFFIXES:
+    #supercomment!
+    df['supercomment'] = ""
+    for header in util.TEXT_HEADERS:
         if header in df:
-            tfidf_frame = tfidf(df[header], suffix)
-            df = pd.concat([df.drop([header], axis=1), tfidf_frame], axis=1)
+            df['supercomment'] += df[header]
+    values = df['supercomment'].values
+    vectorizer = TfidfVectorizer(stop_words='english')
+    tfidf_matrix = vectorizer.fit_transform(values).toarray()
+    featurenames = np.asarray(vectorizer.get_feature_names())
+    tfidf_frame = pd.DataFrame(tfidf_matrix, columns=featurenames)
+    df = df.drop(util.TEXT_HEADERS + ['supercomment'], axis=1)
+    df = pd.concat([df, tfidf_frame], axis=1)
+
+    # for header, suffix in util.TEXT_HEADERS_AND_SUFFIXES:
+    #     if header in df:
+    #         tfidf_frame = tfidf(df[header], suffix)
+    #         df = pd.concat([df.drop([header], axis=1), tfidf_frame], axis=1)
 
     for header in util.DATE_HEADERS:
         if header in df:
             df[header] = parse_date(df[header])
 
     min_max_scaler = preprocessing.MinMaxScaler()
-    variance_scaler = VarianceThreshold(0.005)
+    variance_scaler = VarianceThreshold(0.001)
 
     kept_dates = list(set(util.DATE_HEADERS) - set(util.DROPTEST))
     if kept_dates:
