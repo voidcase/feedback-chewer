@@ -25,7 +25,7 @@ def data_extract():
             df[header] = parse_date(df[header])
 
     min_max_scaler = preprocessing.MinMaxScaler()
-    variance_scaler = VarianceThreshold(0.005)
+    variance_scaler = VarianceThreshold(0.05)
 
     kept_dates = list(set(util.DATE_HEADERS) - set(util.DROPTEST))
     if kept_dates:
@@ -33,11 +33,10 @@ def data_extract():
     variance_scaler.fit(df)
 
     retain = variance_scaler.get_support()
-    retain_indices = [x for x in range(len(retain)) if retain[x]]
-    #for i in remove_indices:
-        #print('dropped', df.columns[i])
-     #   df.drop(df.columns[i], axis=1)
-    df = df.iloc[:, lambda df: retain_indices]
+    droppable_headers = [df.columns[x] for x, y in enumerate(retain) if not y]
+    df = df.drop(droppable_headers, axis=1)
+    # df = df.iloc[:, lambda df: retain_indices]
+    print("df after drops:",df.columns)
     return df
 
 def get_all_data():
