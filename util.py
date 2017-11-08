@@ -9,11 +9,13 @@ SCORE_TYPES = [
     ]
 NAME_HEADERS = ['Beamline', 'Department', 'User Affiliation']
 DATE_HEADERS = ['Experiment start', 'Experiment end', 'Report submitted']
+
 TEXT_HEADERS_AND_SUFFIXES = [
     ('Experiment comments', '_ec'),
     ('Infrastructure comment', '_ic'),
     ('Overall comments', '_oc'),
     ('Remarks', '_r')
 ]
+TEXT_HEADERS = [h[0] for h in TEXT_HEADERS_AND_SUFFIXES]
 DATASET = 'dataset.csv'
-DROPTEST = ['Department', 'User Affiliation', 'Proposal'] + DATE_HEADERS + SCORE_TYPES
+DROPTEST = ['Department', 'User Affiliation', 'Proposal'] + NAME_HEADERS + DATE_HEADERS + SCORE_TYPES
