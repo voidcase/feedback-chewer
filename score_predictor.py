@@ -17,8 +17,12 @@ def logisticRegression(scoretype='Overall'):
     model = clf.fit(x_train,y_train)
     y_predict = model.predict(x_test)
     # C_(i,j) is number of observations known to be in group i but predicted to be in j
-    print(confusion_matrix(y_test,y_predict))
-    print("Logistic regression. \n target:",scoretype,'\ncross_val_scores: ',scores)
+    print(confusion_matrix(y_test,y_predict,labels = [0,1,2,3,4,5]))
+    print("Logistic regression. \ntarget:",scoretype,'\ncross_val_scores: ',scores)
+    coefficients = model.coef_
+    for category in coefficients:
+        zipped = zip(category, list(x_train))
+        pprint(sorted(list(zipped)))
 
 def print_cross_val_scores(scoretype='Overall'):
     if scoretype not in util.SCORE_TYPES:
@@ -41,6 +45,6 @@ def eval_model(scoretype='Overall'):
     return model.score(x_test, y_test) # coefficient of determination R^2
 
 if __name__ == '__main__':
-    logisticRegression(util.TARGET)
-    #print('score: ', eval_model(util.TARGET))
-    #print_cross_val_scores(util.TARGET)
+    #logisticRegression(util.TARGET)
+    print('score: ', eval_model(util.TARGET))
+    print_cross_val_scores(util.TARGET)

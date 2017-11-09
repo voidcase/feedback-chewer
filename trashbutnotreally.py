@@ -1,4 +1,5 @@
-def plot_vocab(values)
+def plot_vocab(column,df):
+    values = df[column].values
     vectorizer = CountVectorizer(stop_words='english')
     matrix = vectorizer.fit_transform(values).toarray()
     featurenames = np.asarray(vectorizer.get_feature_names())
@@ -11,6 +12,5 @@ def plot_vocab(values)
         i += 1
         if (s > 500):
             print(column)
-    print(sorted(frequencylist, reverse=True))
     plt.plot(sorted(frequencylist, reverse=True))
     plt.show()

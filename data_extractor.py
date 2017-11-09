@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 import util
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.feature_selection import VarianceThreshold
 from sklearn import preprocessing
 
@@ -48,10 +49,12 @@ def supercomment(df):
         if header in df:
             df['supercomment'] += df[header]
     values = df['supercomment'].values
-    vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(1,2), min_df=util.MIN_DF)
+
+    vectorizer = TfidfVectorizer(stop_words='english',  min_df=util.MIN_DF)
     tfidf_matrix = vectorizer.fit_transform(values).toarray()
     featurenames = np.asarray(vectorizer.get_feature_names())
     tfidf_frame = pd.DataFrame(tfidf_matrix, columns=featurenames)
+
     df = df.drop(util.TEXT_HEADERS + ['supercomment'], axis=1)
     df = pd.concat([df, tfidf_frame], axis=1)
     return df
@@ -62,6 +65,7 @@ def tfidf_sep_comments(column, columname):
     tfidf_matrix = vectorizer.fit_transform(values).toarray()
     featurenames = np.asarray(vectorizer.get_feature_names())
     tfidf_frame = pd.DataFrame(tfidf_matrix, columns=featurenames)
+
     tfidf_frame.rename(columns=lambda x: x + columname, inplace=True)
     return tfidf_frame
 

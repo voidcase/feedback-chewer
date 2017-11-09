@@ -4,7 +4,7 @@
 # departments: 199
 # user affiliations: 174
 
-# unique words in total: 17178
+# unique words in total: 3917 (after stopwords removal:3664)
 (# words after min_df of 0.02: 47) 
 # unique words in experiment comments: 2363
 # unique words in infrastructure comments: 960
