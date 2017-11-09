@@ -15,7 +15,7 @@ def print_cross_val_scores(scoretype='Overall'):
     scores = cross_val_score(clf, x, y , cv=5)
     print("target: ", scoretype, '\ncross_val_scores: ', scores)
 
-def eval_model_LR(scoretype='Overall'):
+def eval_model(scoretype='Overall'):
     x, y = data_extractor.getXandY(scoretype)
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1)
     model = linear_model.LinearRegression().fit(x_train, y_train)
@@ -28,5 +28,5 @@ def eval_model_LR(scoretype='Overall'):
     return model.score(x_test, y_test) # coefficient of determination R^2
 
 if __name__ == '__main__':
-    print('score: ', eval_model_LR('Beamline hardware'))
-    print_cross_val_scores('Beamline hardware')
+    print('score: ', eval_model(util.TARGET))
+    print_cross_val_scores(util.TARGET)

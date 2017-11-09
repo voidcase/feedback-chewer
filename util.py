@@ -9,6 +9,7 @@ SCORE_TYPES = [
     ]
 NAME_HEADERS = ['Beamline', 'Department', 'User Affiliation']
 DATE_HEADERS = ['Experiment start', 'Experiment end', 'Report submitted']
+EXTERNAL_FACTOR_HEADERS = ['Department', 'User Affiliation'] + DATE_HEADERS
 
 TEXT_HEADERS_AND_SUFFIXES = [
     ('Experiment comments', '_ec'),
@@ -18,6 +19,7 @@ TEXT_HEADERS_AND_SUFFIXES = [
 ]
 TEXT_HEADERS = [h[0] for h in TEXT_HEADERS_AND_SUFFIXES]
 DATASET = 'dataset.csv'
-DROPTEST = ['Proposal'] + SCORE_TYPES + DATE_HEADERS + NAME_HEADERS
-
+DROPTEST = ['Proposal'] + SCORE_TYPES + EXTERNAL_FACTOR_HEADERS + DATE_HEADERS
+TARGET = 'Beamline software'
+VARIANCE_THRESHOLD = 0.001
 MIN_DF=0.02

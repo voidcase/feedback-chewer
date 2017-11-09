@@ -23,7 +23,7 @@ def data_extract():
             df[header] = parse_date(df[header])
 
     min_max_scaler = preprocessing.MinMaxScaler()
-    variance_scaler = VarianceThreshold(0.0005)
+    variance_scaler = VarianceThreshold(util.VARIANCE_THRESHOLD)
 
     kept_dates = list(set(util.DATE_HEADERS) - set(util.DROPTEST))
     if kept_dates:
