@@ -23,3 +23,8 @@ DROPTEST = ['Proposal'] + SCORE_TYPES + EXTERNAL_FACTOR_HEADERS + DATE_HEADERS
 TARGET = 'Overall'
 VARIANCE_THRESHOLD = 0.005
 MIN_DF=0
+DEFAULT_CONFIG = {
+    'target': 'Overall',
+    'variance_threshold': 0.001,
+    'droplist': ['Proposal'] + SCORE_TYPES + EXTERNAL_FACTOR_HEADERS + DATE_HEADERS
+}

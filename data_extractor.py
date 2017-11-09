@@ -7,7 +7,7 @@ from sklearn.feature_selection import VarianceThreshold
 from sklearn import preprocessing
 
 
-def data_extract():
+def data_extract(config=util.DEFAULT_CONFIG):
     df = pd.read_csv(util.DATASET).drop(util.DROPTEST, axis=1)
     df = df.fillna('')
 
@@ -24,9 +24,9 @@ def data_extract():
             df[header] = parse_date(df[header])
 
     min_max_scaler = preprocessing.MinMaxScaler()
-    variance_scaler = VarianceThreshold(util.VARIANCE_THRESHOLD)
+    variance_scaler = VarianceThreshold(config['variance_threshold'])
 
-    kept_dates = list(set(util.DATE_HEADERS) - set(util.DROPTEST))
+    kept_dates = list(set(util.DATE_HEADERS) - set(config['droplist']))
     if kept_dates:
         df[kept_dates] = min_max_scaler.fit_transform(df[kept_dates])
     variance_scaler.fit(df)
@@ -43,13 +43,16 @@ def sep_comments(df):
             df = pd.concat([df.drop([header], axis=1), tfidf_frame], axis=1)
     return df
 
+def get_x_and_y(config=util.DEFAULT_CONFIG):
+    y_col = get_all_data()['Overall']
+    x = data_extract(config)
+    return x, y_col
 def supercomment(df):
     df['supercomment'] = ""
     for header in util.TEXT_HEADERS:
         if header in df:
             df['supercomment'] += df[header]
     values = df['supercomment'].values
-
     vectorizer = TfidfVectorizer(stop_words='english',  min_df=util.MIN_DF)
     tfidf_matrix = vectorizer.fit_transform(values).toarray()
     featurenames = np.asarray(vectorizer.get_feature_names())
@@ -65,18 +68,12 @@ def tfidf_sep_comments(column, columname):
     tfidf_matrix = vectorizer.fit_transform(values).toarray()
     featurenames = np.asarray(vectorizer.get_feature_names())
     tfidf_frame = pd.DataFrame(tfidf_matrix, columns=featurenames)
-
     tfidf_frame.rename(columns=lambda x: x + columname, inplace=True)
     return tfidf_frame
 
 def get_all_data():
     df = pd.read_csv(util.DATASET)
     return df
-
-def getXandY(y='Overall'):
-    y_col = get_all_data()[y]
-    x = data_extract()
-    return x, y_col
 
 def parse_date(column):
     column = pd.to_datetime(column)
