@@ -6,7 +6,7 @@ from sklearn.feature_selection import VarianceThreshold
 from sklearn import preprocessing
 
 
-def data_extract():
+def data_extract(config=util.DEFAULT_CONFIG):
     df = pd.read_csv(util.DATASET).drop(util.DROPTEST, axis=1)
     df = df.fillna('')
 
@@ -38,9 +38,9 @@ def data_extract():
             df[header] = parse_date(df[header])
 
     min_max_scaler = preprocessing.MinMaxScaler()
-    variance_scaler = VarianceThreshold(util.VARIANCE_THRESHOLD)
+    variance_scaler = VarianceThreshold(config['variance_threshold'])
 
-    kept_dates = list(set(util.DATE_HEADERS) - set(util.DROPTEST))
+    kept_dates = list(set(util.DATE_HEADERS) - set(config['droplist']))
     if kept_dates:
         df[kept_dates] = min_max_scaler.fit_transform(df[kept_dates])
     variance_scaler.fit(df)
@@ -54,9 +54,9 @@ def get_all_data():
     df = pd.read_csv(util.DATASET)
     return df
 
-def getXandY(y='Overall'):
-    y_col = get_all_data()[y]
-    x = data_extract()
+def get_x_and_y(config=util.DEFAULT_CONFIG):
+    y_col = get_all_data()['Overall']
+    x = data_extract(config)
     return x, y_col
 
 def tfidf(column, columname):

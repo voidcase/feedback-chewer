@@ -7,16 +7,16 @@ import matplotlib.pyplot as plt
 from pprint import pprint
 
 
-def print_cross_val_scores(scoretype='Overall'):
-    if scoretype not in util.SCORE_TYPES:
+def print_cross_val_scores(config=util.DEFAULT_CONFIG):
+    if config['target'] not in util.SCORE_TYPES:
         return None
     clf = linear_model.LinearRegression()
-    x, y = data_extractor.getXandY(scoretype)
+    x, y = data_extractor.get_x_and_y(config)
     scores = cross_val_score(clf, x, y , cv=5)
-    print("target: ", scoretype, '\ncross_val_scores: ', scores)
+    print("target: ", config['target'], '\ncross_val_scores: ', scores)
 
-def eval_model(scoretype='Overall'):
-    x, y = data_extractor.getXandY(scoretype)
+def eval_model(config=util.DEFAULT_CONFIG):
+    x, y = data_extractor.get_x_and_y(config)
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1)
     model = linear_model.LinearRegression().fit(x_train, y_train)
     #plt.plot(y_test,model.predict(x_test), 'bo')
@@ -28,5 +28,7 @@ def eval_model(scoretype='Overall'):
     return model.score(x_test, y_test) #coefficient of determination R^2
 
 if __name__ == '__main__':
-    print('score: ', eval_model(util.TARGET))
-    print_cross_val_scores(util.TARGET)
+    config = util.DEFAULT_CONFIG
+    
+    print('score: ', eval_model())
+    print_cross_val_scores()

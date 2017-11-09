@@ -22,3 +22,8 @@ DATASET = 'dataset.csv'
 DROPTEST = ['Proposal'] + SCORE_TYPES + EXTERNAL_FACTOR_HEADERS + DATE_HEADERS
 TARGET = 'Beamline software'
 VARIANCE_THRESHOLD = 0.001
+DEFAULT_CONFIG = {
+    'target': 'Overall',
+    'variance_threshold': 0.001,
+    'droplist': ['Proposal'] + SCORE_TYPES + EXTERNAL_FACTOR_HEADERS + DATE_HEADERS
+}
