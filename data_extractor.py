@@ -1,6 +1,9 @@
 import pandas as pd
 import numpy as np
 import util
+import requests
+import pickle
+import os
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import VarianceThreshold
 from sklearn import preprocessing
@@ -50,14 +53,17 @@ def data_extract(config=util.DEFAULT_CONFIG):
     df = df.drop(droppable_headers, axis=1)
     return df
 
+
 def get_all_data():
     df = pd.read_csv(util.DATASET)
     return df
+
 
 def get_x_and_y(config=util.DEFAULT_CONFIG):
     y_col = get_all_data()['Overall']
     x = data_extract(config)
     return x, y_col
+
 
 def tfidf(column, columname):
     values = column.values
@@ -73,3 +79,17 @@ def parse_date(column):
     column = pd.to_datetime(column)
     column = [t.value // 10 ** 9 for t in column]
     return column
+
+
+def dependency_parse(comment, cache_file=util.VILDE_PICKLE_FILE):
+    cache = {}
+    try:
+        cache = pickle.load(open(cache_file,'rb'))
+        if comment in cache:
+            return cache[comment]
+    except FileNotFoundError:
+        pass
+    response = requests.post(url="http://vilde.cs.lth.se:9000/en/default/api/json", data=comment).json()
+    cache[comment] = response
+    pickle.dump(cache, open(cache_file, 'wb'))
+    return response
