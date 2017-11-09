@@ -28,5 +28,5 @@ def eval_model(scoretype='Overall'):
     return model.score(x_test, y_test) #coefficient of determination R^2
 
 if __name__ == '__main__':
-    print('score: ', eval_model('Beamline hardware'))
-    print_cross_val_scores('Beamline hardware')
+    print('score: ', eval_model(util.TARGET))
+    print_cross_val_scores(util.TARGET)
