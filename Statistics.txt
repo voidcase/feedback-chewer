@@ -1,0 +1,17 @@
+# proposals: 2061
+
+# beamlines: 19
+# departments: 199
+# user affiliations: 174
+
+# unique words in total: 17178
+(# words after min_df of 0.02: 47) 
+# unique words in experiment comments: 2363
+# unique words in infrastructure comments: 960
+# unique words in overall comments: 1654
+# unique words in remarks: 436
+
+# experiment comments: 662
+# infrastructure comments: 275
+# overall comments: 397
+# remarks: 80
