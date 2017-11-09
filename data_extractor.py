@@ -11,7 +11,7 @@ from sklearn import preprocessing
 
 
 def data_extract(config=util.DEFAULT_CONFIG):
-    df = pd.read_csv(util.DATASET).drop(util.DROPTEST, axis=1)
+    df = pd.read_csv(util.FEEDBACK_DATA).drop(util.DROPTEST, axis=1)
     df = df.fillna('')
 
     for header in util.NAME_HEADERS:
@@ -75,7 +75,7 @@ def tfidf_sep_comments(column, columname):
     return tfidf_frame
 
 def get_all_data():
-    df = pd.read_csv(util.DATASET)
+    df = pd.read_csv(util.FEEDBACK_DATA)
     return df
 
 def parse_date(column):
