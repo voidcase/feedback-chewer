@@ -102,3 +102,7 @@ def dependency_parse(comment, cache_file=util.VILDE_PICKLE_FILE):
     pickle.dump(cache, open(cache_file, 'wb'))
     ret = response['DM10']
     return ret
+
+def get_txt_lineset(filename: str) -> set:
+    with open(filename, 'r', encoding='utf-8') as datafile:
+        return set(x.strip() for x in datafile)
