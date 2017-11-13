@@ -29,5 +29,3 @@ class Comment:
             self.tags = [word['cpostag'] for word in properties]
             self.lemmas = [word['lemma'] for word in properties]
             self.pos = [word['pos'] for word in properties]
-
-comment  = Comment('The lunch was good')
