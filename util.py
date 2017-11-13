@@ -18,7 +18,11 @@ TEXT_HEADERS_AND_SUFFIXES = [
     ('Remarks', '_r')
 ]
 TEXT_HEADERS = [h[0] for h in TEXT_HEADERS_AND_SUFFIXES]
-DATASET = 'dataset.csv'
+DATASET_PATH = 'datasets/'
+FEEDBACK_DATA = DATASET_PATH + 'feedback.csv'
+POSITIVE_DATA = DATASET_PATH + 'postive-words.txt'
+NEGATIVE_DATA = DATASET_PATH + 'negative-words.txt'
+VILDE_PICKLE_FILE = 'pickles/vilde.pickle'
 DROPTEST = ['Proposal'] + SCORE_TYPES + EXTERNAL_FACTOR_HEADERS + DATE_HEADERS
 TARGET = 'Overall'
 VARIANCE_THRESHOLD = 0.01

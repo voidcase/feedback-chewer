@@ -2,13 +2,16 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import util
+import requests
+import pickle
+import os
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.feature_selection import VarianceThreshold
 from sklearn import preprocessing
 
 
 def data_extract(config=util.DEFAULT_CONFIG):
-    df = pd.read_csv(util.DATASET).drop(util.DROPTEST, axis=1)
+    df = pd.read_csv(util.FEEDBACK_DATA).drop(util.DROPTEST, axis=1)
     df = df.fillna('')
 
     for header in util.NAME_HEADERS:
@@ -76,10 +79,24 @@ def tfidf_sep_comments(column, columname):
     return tfidf_frame
 
 def get_all_data():
-    df = pd.read_csv(util.DATASET)
+    df = pd.read_csv(util.FEEDBACK_DATA)
     return df
 
 def parse_date(column):
     column = pd.to_datetime(column)
     column = [t.value // 10 ** 9 for t in column]
     return column
+
+
+def dependency_parse(comment, cache_file=util.VILDE_PICKLE_FILE):
+    cache = {}
+    try:
+        cache = pickle.load(open(cache_file,'rb'))
+        if comment in cache:
+            return cache[comment]
+    except FileNotFoundError:
+        pass
+    response = requests.post(url="http://vilde.cs.lth.se:9000/en/default/api/json", data=comment).json()
+    cache[comment] = response
+    pickle.dump(cache, open(cache_file, 'wb'))
+    return response
