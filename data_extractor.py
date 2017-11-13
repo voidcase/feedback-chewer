@@ -5,6 +5,7 @@ import util
 import requests
 import pickle
 import os
+from pprint import pprint
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.feature_selection import VarianceThreshold
 from sklearn import preprocessing
@@ -100,9 +101,23 @@ def dependency_parse(comment, cache_file=util.VILDE_PICKLE_FILE):
     response = requests.post(url="http://vilde.cs.lth.se:9000/en/default/api/json", data=comment).json()
     cache[comment] = response['DM10']
     pickle.dump(cache, open(cache_file, 'wb'))
-    ret = response['DM10']
-    return ret
+    return response['DM10']
+
 
 def get_txt_lineset(filename: str) -> set:
     with open(filename, 'r', encoding='utf-8') as datafile:
         return set(x.strip() for x in datafile)
+
+
+class Comment:
+    def __init__(self,sentence):
+        parsed = dependency_parse(sentence)
+        edges = parsed['edges'][0]['edges'][0]
+        nodes = parsed['nodes'][1]['nodes'][0]
+        properties = nodes['properties']
+        self.tags = [word['cpostag'] for word in properties]
+        self.lemmas = [word['lemma'] for word in properties]
+        self.pos = [word['pos'] for word in properties]
+
+        self.connections = edges['connections']
+        self.properties = edges['properties']
