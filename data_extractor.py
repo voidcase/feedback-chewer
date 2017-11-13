@@ -94,13 +94,19 @@ def dependency_parse(comment, cache_file=util.VILDE_PICKLE_FILE):
     try:
         cache = pickle.load(open(cache_file,'rb'))
         if comment in cache:
-            return cache[comment]['DM10']
+            return cache[comment]
     except FileNotFoundError:
-        pass
+        if not os.path.exists('pickles/'):
+            os.makedirs('pickles/')
     response = requests.post(url="http://vilde.cs.lth.se:9000/en/default/api/json", data=comment).json()
-    cache[comment] = response
+    cache[comment] = response['DM10']
     pickle.dump(cache, open(cache_file, 'wb'))
     return response['DM10']
+
+
+def get_txt_lineset(filename: str) -> set:
+    with open(filename, 'r', encoding='utf-8') as datafile:
+        return set(x.strip() for x in datafile)
 
 
 
