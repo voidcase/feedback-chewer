@@ -11,6 +11,7 @@ def test_dep_parse():
     print(data_extractor.dependency_parse("The cat is wearing boots", cache_file=filename))
     print("works with cache")
     assert(os.path.exists(filename))
+    assert (type(data_extractor.dependency_parse("The cat is wearing boots", cache_file=filename)) == dict)
     os.remove(filename)
 
 

@@ -91,8 +91,10 @@ def dependency_parse(comment, cache_file=util.VILDE_PICKLE_FILE):
         if comment in cache:
             return cache[comment]
     except FileNotFoundError:
-        pass
+        if not os.path.exists('pickles/'):
+            os.makedirs('pickles/')
     response = requests.post(url="http://vilde.cs.lth.se:9000/en/default/api/json", data=comment).json()
-    cache[comment] = response
+    cache[comment] = response['DM10']
     pickle.dump(cache, open(cache_file, 'wb'))
-    return response
+    ret = response['DM10']
+    return ret
