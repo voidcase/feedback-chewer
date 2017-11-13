@@ -47,6 +47,7 @@ def get_x_and_y(config=util.DEFAULT_CONFIG):
     y_col = get_all_data()['Overall']
     x = data_extract(config)
     return x, y_col
+
 def supercomment(df):
     df['supercomment'] = ""
     for header in util.TEXT_HEADERS:
@@ -55,11 +56,14 @@ def supercomment(df):
     values = df['supercomment'].values
     vectorizer = TfidfVectorizer(stop_words='english',  min_df=util.MIN_DF)
     tfidf_matrix = vectorizer.fit_transform(values).toarray()
+    #   vectorizer = CountVectorizer(stop_words='english', min_df=util.MIN_DF)
+    #   matrix = vectorizer.fit_transform(values).toarray()
     featurenames = np.asarray(vectorizer.get_feature_names())
     tfidf_frame = pd.DataFrame(tfidf_matrix, columns=featurenames)
-
+    #   tf_frame = pd.DataFrame(matrix, columns=featurenames)
     df = df.drop(util.TEXT_HEADERS + ['supercomment'], axis=1)
     df = pd.concat([df, tfidf_frame], axis=1)
+    #   df = pd.concat([df, tf_frame], axis=1)
     return df
 
 def tfidf_sep_comments(column, columname):
