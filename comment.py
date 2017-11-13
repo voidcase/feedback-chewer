@@ -10,8 +10,13 @@ class Comment:
         else:
             edges0 = parsed['edges']
             edges = next((item['edges'][0] for item in edges0 if item['layer'] == 'se.lth.cs.docforia.graph.text.DependencyRelation'))
-            self.connections = edges['connections']
             self.properties = [item['relation'] for item in edges['properties']]
+            size = len(self.properties)
+            connections = edges['connections']
+            conn_tuples = [None]*size
+            for i in range(0, size*2, 2):
+                conn_tuples[int(i/2)] = (connections[i],connections[i+1])
+            self.connections = conn_tuples
 
         if parsed['nodes'] == []:
             self.tags = []
@@ -24,3 +29,5 @@ class Comment:
             self.tags = [word['cpostag'] for word in properties]
             self.lemmas = [word['lemma'] for word in properties]
             self.pos = [word['pos'] for word in properties]
+
+comment  = Comment('The lunch was good')
