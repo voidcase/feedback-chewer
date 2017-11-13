@@ -25,8 +25,8 @@ NEGATIVE_DATA = DATASET_PATH + 'negative-words.txt'
 VILDE_PICKLE_FILE = 'pickles/vilde.pickle'
 DROPTEST = ['Proposal'] + SCORE_TYPES + EXTERNAL_FACTOR_HEADERS + DATE_HEADERS
 TARGET = 'Overall'
-VARIANCE_THRESHOLD = 0.005
-MIN_DF=0
+VARIANCE_THRESHOLD = 0.01
+MIN_DF=1
 DEFAULT_CONFIG = {
     'target': 'Overall',
     'variance_threshold': 0.001,
