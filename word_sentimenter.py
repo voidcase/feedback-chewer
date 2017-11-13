@@ -1,13 +1,17 @@
 import data_extractor as data
 import util
+from comment import Comment
 
-def sentiment_annotate(comment: str) -> (list, list):
+def find_posi_nega_tokens(comment: Comment) -> (list, list):
     positives = data.get_txt_lineset(util.POSITIVE_DATA)
     negatives = data.get_txt_lineset(util.NEGATIVE_DATA)
-    parsed = data.dependency_parse(comment)
-    tokens = next((n for n in parsed['nodes'] if n['layer'].split('.')[-1] == 'Token'))['nodes'][0]['properties']
-    negatokens_indices = [i for i, w in enumerate(tokens) if w['lemma'] in negatives]
-    positokens_indices = [i for i, w in enumerate(tokens) if w['lemma'] in positives]
-    print(tokens)
-    print('negatokens:',[tokens[i] for i in negatokens_indices])
-    print('positokens:',[tokens[i] for i in positokens_indices])
+    tokens = [x.lower() for x in comment.lemmas]
+    nega_indices = [i for i, w in enumerate(tokens) if w in negatives]
+    posi_indices = [i for i, w in enumerate(tokens) if w in positives]
+    return(posi_indices, nega_indices)
+
+def find_adj(comment: Comment):
+    properties = comment.properties
+    print(comment.properties)
+    print(comment.connections)
+    return [i for i, w in enumerate(properties) if w == 'nsubj']
