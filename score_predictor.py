@@ -54,7 +54,7 @@ def cross_val_linr(config=util.DEFAULT_CONFIG):
     scores = cross_val_score(clf, x, y , cv=5)
     print("target: ", config['target'], '\ncross_val_scores: ', scores)
 
-def coefficients_linr(config=util.DEFAULT_CONFIG):
+def coefficients_line(config=util.DEFAULT_CONFIG):
     x, y = data_extractor.get_x_and_y(config)
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.5)
     model = linear_model.LinearRegression().fit(x_train, y_train)

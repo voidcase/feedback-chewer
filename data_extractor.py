@@ -1,17 +1,15 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import util
 import requests
 import pickle
 import os
-from pprint import pprint
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.feature_selection import VarianceThreshold
 from sklearn import preprocessing
 
 
-def data_extract(config=util.DEFAULT_CONFIG):
+def data_extract(config: dict = util.DEFAULT_CONFIG) -> pd.DataFrame:
     df = pd.read_csv(util.FEEDBACK_DATA).drop(util.DROPTEST, axis=1)
     df = df.fillna('')
 
@@ -21,7 +19,7 @@ def data_extract(config=util.DEFAULT_CONFIG):
             df = pd.concat([df.drop([header], axis=1), dummies], axis=1)
 
     df = supercomment(df)
-    #df = sep_comments(df)
+    # df = sep_comments(df)
 
     for header in util.DATE_HEADERS:
         if header in df:
@@ -40,25 +38,28 @@ def data_extract(config=util.DEFAULT_CONFIG):
     df = df.drop(droppable_headers, axis=1)
     return df
 
-def sep_comments(df):
+
+def sep_comments(df: pd.DataFrame):
     for header, suffix in util.TEXT_HEADERS_AND_SUFFIXES:
         if header in df:
             tfidf_frame = tfidf_sep_comments(df[header], suffix)
             df = pd.concat([df.drop([header], axis=1), tfidf_frame], axis=1)
     return df
 
-def get_x_and_y(config=util.DEFAULT_CONFIG):
+
+def get_x_and_y(config=util.DEFAULT_CONFIG) -> (pd.DataFrame, list):
     y_col = get_all_data()['Overall']
     x = data_extract(config)
     return x, y_col
 
-def supercomment(df):
+
+def supercomment(df: pd.DataFrame):
     df['supercomment'] = ""
     for header in util.TEXT_HEADERS:
         if header in df:
             df['supercomment'] += df[header]
     values = df['supercomment'].values
-    vectorizer = TfidfVectorizer(stop_words='english',  min_df=util.MIN_DF)
+    vectorizer = TfidfVectorizer(stop_words='english', min_df=util.MIN_DF)
     tfidf_matrix = vectorizer.fit_transform(values).toarray()
     #   vectorizer = CountVectorizer(stop_words='english', min_df=util.MIN_DF)
     #   matrix = vectorizer.fit_transform(values).toarray()
@@ -70,6 +71,7 @@ def supercomment(df):
     #   df = pd.concat([df, tf_frame], axis=1)
     return df
 
+
 def tfidf_sep_comments(column, columname):
     values = column.values
     vectorizer = TfidfVectorizer(stop_words='english')
@@ -79,9 +81,11 @@ def tfidf_sep_comments(column, columname):
     tfidf_frame.rename(columns=lambda x: x + columname, inplace=True)
     return tfidf_frame
 
-def get_all_data():
+
+def get_all_data() -> pd.DataFrame:
     df = pd.read_csv(util.FEEDBACK_DATA)
     return df
+
 
 def parse_date(column):
     column = pd.to_datetime(column)
@@ -92,7 +96,7 @@ def parse_date(column):
 def dependency_parse(comment, cache_file=util.VILDE_PICKLE_FILE):
     cache = {}
     try:
-        cache = pickle.load(open(cache_file,'rb'))
+        cache = pickle.load(open(cache_file, 'rb'))
         if comment in cache:
             return cache[comment]
     except FileNotFoundError:
@@ -110,7 +114,7 @@ def get_txt_lineset(filename: str) -> set:
 
 
 class Comment:
-    def __init__(self,sentence):
+    def __init__(self, sentence):
         parsed = dependency_parse(sentence)
         edges = parsed['edges'][0]['edges'][0]
         nodes = parsed['nodes'][1]['nodes'][0]
