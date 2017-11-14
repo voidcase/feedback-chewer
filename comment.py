@@ -15,7 +15,7 @@ class Comment:
             connections = edges['connections']
             conn_tuples = [None]*size
             for i in range(0, size*2, 2):
-                conn_tuples[int(i/2)] = (connections[i],connections[i+1])
+                conn_tuples[int(i/2)] = (connections[i]-1,connections[i+1]-1) # -1 because indices start at 1
             self.connections = conn_tuples
 
         if parsed['nodes'] == []:
