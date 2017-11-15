@@ -16,7 +16,7 @@ def find_posi_nega_tokens(comment: Comment) -> (list, list):
 def find_nps(comment: Comment, positokens, negatokens) -> (set, set):
     properties = comment.properties
     objects = [i for i, w in enumerate(properties) if w in ['nsubj', 'dobj']]
-    subjects = [i for i, w in enumerate(properties) if w in ['amod']]
+    subjects = [i for i, w in enumerate(properties) if w in ['amod', 'case']]
     posi, nega = find_posi_nega_tokens(comment)
     relevant_connections = [comment.connections[i] for i in objects] + \
                            [reversed(comment.connections[j]) for j in subjects]
@@ -62,9 +62,13 @@ def create_dict(comment: Comment):
     pos_tokens, neg_tokens = find_posi_nega_tokens(comment)
     pos_nouns, neg_nouns = find_nps(comment, pos_tokens, neg_tokens)
     dict = {}
+    # 0 is neutral, 1 is positive and -1 is negative
     for i in range(comment.size): dict[i] = 0
     for i in pos_nouns:
         dict[i] = 1
     for i in neg_nouns: dict[i] = -1
     return dict
 
+dict = create_dict(Comment('The laboratory is perfect'))
+
+print(dict)
