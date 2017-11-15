@@ -20,32 +20,34 @@ def find_nps(comment: Comment, positokens, negatokens) -> (set, set):
     posi, nega = find_posi_nega_tokens(comment)
     relevant_connections = [comment.connections[i] for i in objects] + \
                            [reversed(comment.connections[j]) for j in subjects]
-    positive_nouns , negative_nouns = set(), set()
+    positive_nouns, negative_nouns = set(), set()
     for j, i in relevant_connections:
         for w in posi:
-            if w == i and comment.pos[j] in ['NN','NNS']:
+            if w == i and comment.pos[j] in ['NN', 'NNS']:
                 if has_connection(comment, i, 'neg'):
                     negative_nouns = negative_nouns.union(find_compound_conj(comment, j))
                 else:
                     positive_nouns = positive_nouns.union(find_compound_conj(comment, j))
         for w in nega:
-            if w == i and comment.pos[j] in ['NN','NNS']:
+            if w == i and comment.pos[j] in ['NN', 'NNS']:
                 if has_connection(comment, i, 'neg'):
                     positive_nouns = positive_nouns.union(find_compound_conj(comment, j))
                 else:
                     negative_nouns = negative_nouns.union(find_compound_conj(comment, j))
     return positive_nouns, negative_nouns
 
+
 def find_compound_conj(comment: Comment, index) -> set:
-    compounds = [i for i, w in enumerate(comment.properties) if w in ['compound','conj']]
+    compounds = [i for i, w in enumerate(comment.properties) if w in ['compound', 'conj']]
     relevant_connections = [comment.connections[i] for i in compounds]
     compound = {index}
     for i, j in relevant_connections:
-        if i == index and not has_connection(comment, j, 'amod'): # e.g. for case 'excellent beamline but bad support'
+        if i == index and not has_connection(comment, j, 'amod'):  # e.g. for case 'excellent beamline but bad support'
             compound.add(j)
         if j == index and not has_connection(comment, i, 'amod'):
             compound.add(i)
     return compound
+
 
 def has_connection(comment: Comment, index, conn_label) -> bool:
     connections = [i for i, w in enumerate(comment.properties) if w == conn_label]
@@ -54,6 +56,7 @@ def has_connection(comment: Comment, index, conn_label) -> bool:
         if j == index or i == index:
             return True
     return False
+
 
 def create_dict(comment: Comment):
     pos_tokens, neg_tokens = find_posi_nega_tokens(comment)
@@ -64,13 +67,4 @@ def create_dict(comment: Comment):
         dict[i] = 1
     for i in neg_nouns: dict[i] = -1
     return dict
-
-# cmts = re.split("[\-!?:.]+", cmt)
-
-dataset = data.get_all_data()
-comments = dataset['Experiment comments']
-c = Comment('great beamline with great staff')
-print(create_dict(c))
-# print(c.connections)
-# print(c.properties)
 
