@@ -54,7 +54,7 @@ def cross_val_linr(config=util.DEFAULT_CONFIG):
     scores = cross_val_score(clf, x, y , cv=5)
     print("target: ", config['target'], '\ncross_val_scores: ', scores)
 
-def coefficients_line(config=util.DEFAULT_CONFIG):
+def coefficients_linr(config=util.DEFAULT_CONFIG):
     x, y = data_extractor.get_x_and_y(config)
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.5)
     model = linear_model.LinearRegression().fit(x_train, y_train)
@@ -66,18 +66,19 @@ def coefficients_line(config=util.DEFAULT_CONFIG):
 
 def confusion_matrix_linr(config=util.DEFAULT_CONFIG):
     x, y = data_extractor.get_x_and_y(config)
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.5)
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
     model = linear_model.LinearRegression().fit(x_train, y_train)
     y_pred = model.predict(x_test)
     y_pred_round = [round(x, 0) for x in y_pred]
     confusionmatrix = pandas_ml.ConfusionMatrix(y_test, y_pred_round)
     confusionmatrix.plot()
+    confusionmatrix.print_stats()
     plt.show()
 
 if __name__ == '__main__':
     config = util.DEFAULT_CONFIG
     #logisticRegression()
-    #svm()
+    svm()
     #coefficients_linr()
     #cross_val_linr()
-    confusion_matrix_linr()
+    #confusion_matrix_linr()
