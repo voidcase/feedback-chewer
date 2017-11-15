@@ -15,3 +15,20 @@
 # infrastructure comments: 275
 # overall comments: 397
 # remarks: 80
+
+Accuracies with default configuration (values are rounded off average of 5 runs cv):
+
+SVM (linear kernel): 0.38
+SVM (default): 0.4
+linear regression with rounding off: 0.35
+linear regression without rounding off: (R^2) = +- 0.0
+logistic regression: 0.42
+
+Accuracies with tf instead of tfidf:
+
+SVM (linear kernel): 0.4
+SVM (default): 0.4
+linear regression with rounding off: 0.2
+linear regression without rounding off: (R^2) = +- number * 10^24 or in that category
+logistic regression: 0.38
+
