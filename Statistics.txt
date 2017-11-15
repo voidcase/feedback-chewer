@@ -32,3 +32,12 @@ linear regression with rounding off: 0.2
 linear regression without rounding off: (R^2) = +- number * 10^24 or in that category
 logistic regression: 0.38
 
+Overall grades:
+
+5: 775 times
+4: 825 times
+3: 252 times
+2: 81 times
+1: 26 times
+0: 103 times -> some people did not answer anything or forgot the overall grade
+
