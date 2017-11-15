@@ -1,6 +1,4 @@
 import data_extractor
-from pprint import pprint
-
 
 class Comment:
     def __init__(self, sentence):
@@ -33,3 +31,4 @@ class Comment:
             self.tags = [word['cpostag'] for word in properties]
             self.lemmas = [word['lemma'] for word in properties]
             self.pos = [word['pos'] for word in properties]
+        self.size = len(self.tags)
