@@ -84,6 +84,7 @@ def tfidf_sep_comments(column, columname):
 
 def get_all_data() -> pd.DataFrame:
     df = pd.read_csv(util.FEEDBACK_DATA)
+    df = df.fillna('')
     return df
 
 
