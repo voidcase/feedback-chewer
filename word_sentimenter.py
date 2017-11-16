@@ -2,6 +2,7 @@ import data_extractor as data
 import re
 import util
 from comment import Comment
+from pprint import pprint
 
 
 def find_posi_nega_tokens(comment: Comment) -> (list, list):
@@ -15,8 +16,8 @@ def find_posi_nega_tokens(comment: Comment) -> (list, list):
 
 def find_nps(comment: Comment, positokens, negatokens) -> (set, set):
     properties = comment.properties
-    objects = [i for i, w in enumerate(properties) if w in ['nsubj', 'dobj']]
-    subjects = [i for i, w in enumerate(properties) if w in ['amod', 'case']]
+    objects = [i for i, w in enumerate(properties) if w in ['nsubj', 'dobj', 'nmod']]
+    subjects = [i for i, w in enumerate(properties) if w in ['amod']]
     posi, nega = find_posi_nega_tokens(comment)
     relevant_connections = [comment.connections[i] for i in objects] + \
                            [reversed(comment.connections[j]) for j in subjects]
@@ -69,6 +70,6 @@ def create_dict(comment: Comment):
     for i in neg_nouns: dict[comment.lemmas[i]] = -1
     return dict
 
-dict = create_dict(Comment('The laboratory is perfect'))
-
-print(dict)
+if __name__ == '__main__':
+    dict = create_dict(Comment('we are not happy about the settings'))
+    pprint(dict)
