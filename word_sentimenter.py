@@ -16,7 +16,7 @@ def find_posi_nega_tokens(comment: Comment) -> (list, list):
 
 def find_nps(comment: Comment, positokens, negatokens) -> (set, set):
     properties = comment.properties
-    objects = [i for i, w in enumerate(properties) if w in ['nsubj', 'dobj', 'nmod']]
+    objects = [i for i, w in enumerate(properties) if w in ['nsubj', 'dobj']]
     subjects = [i for i, w in enumerate(properties) if w in ['amod']]
     posi, nega = find_posi_nega_tokens(comment)
     relevant_connections = [comment.connections[i] for i in objects] + \
@@ -39,7 +39,7 @@ def find_nps(comment: Comment, positokens, negatokens) -> (set, set):
 
 
 def find_compound_conj(comment: Comment, index) -> set:
-    compounds = [i for i, w in enumerate(comment.properties) if w in ['compound', 'conj']]
+    compounds = [i for i, w in enumerate(comment.properties) if w in ['compound', 'conj', 'ccomp']]
     relevant_connections = [comment.connections[i] for i in compounds]
     compound = {index}
     for i, j in relevant_connections:
@@ -71,5 +71,26 @@ def create_dict(comment: Comment):
     return dict
 
 if __name__ == '__main__':
-    dict = create_dict(Comment('we are not happy about the settings'))
+    # comments = data.get_all_data()['Experiment comments']
+    # positive_nps = set()
+    # negative_nps = set()
+    # for cmt in comments:
+    #     cmts = re.split('[\.!:-]', cmt)
+    #     for line in cmts:
+    #         comment = Comment(line)
+    #         posi, nega = find_posi_nega_tokens(comment)
+    #         posi_np, nega_np = find_nps(comment, posi, nega)
+    #         posi_np = [comment.lemmas[i] for i in posi_np]
+    #         nega_np = [comment.lemmas[i] for i in nega_np]
+    #         print(cmt)
+    #         positive_nps = positive_nps.union(posi_np)
+    #         negative_nps = negative_nps.union(nega_np)
+    #     print(positive_nps)
+
+    c = Comment('the beam was instable')
+    posi, nega = find_posi_nega_tokens(c)
+    posnps, negnps = find_nps(c,posi,nega)
+    print(posi, nega)
+    print(posnps, negnps)
+    dict = create_dict(c)
     pprint(dict)
