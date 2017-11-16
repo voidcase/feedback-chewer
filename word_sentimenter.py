@@ -63,10 +63,10 @@ def create_dict(comment: Comment):
     pos_nouns, neg_nouns = find_nps(comment, pos_tokens, neg_tokens)
     dict = {}
     # 0 is neutral, 1 is positive and -1 is negative
-    for i in range(comment.size): dict[i] = 0
+    #for i in range(comment.size): dict[comment.lemmas[i]] = 0
     for i in pos_nouns:
-        dict[i] = 1
-    for i in neg_nouns: dict[i] = -1
+        dict[comment.lemmas[i]] = 1
+    for i in neg_nouns: dict[comment.lemmas[i]] = -1
     return dict
 
 dict = create_dict(Comment('The laboratory is perfect'))
