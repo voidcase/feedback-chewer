@@ -8,21 +8,24 @@
             href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
             integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb"
             crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 <div class="container">
     <div class="row">
         <div class="col-6-md panel">
             <h2>Enter a comment</h2>
-            <textarea id="comment_field" rows="6" cols="40"></textarea>
+            <textarea id="comment-field" rows="6" cols="40"></textarea>
             <br>
-            <button id="annotate_button" class="btn btn-default">annotate!</button>
+            <button id="annotate-button" class="btn btn-default">annotate!</button>
         </div>
     </div>
     <div class="row">
         <div class="col-6-md">
             <div class="panel panel-default">
-                <div class="panel-body" id="output_field"></div>
+                <div class="panel-body">
+                    <ul class="plusminuslist" id="output-field"></ul>
+                </div>
             </div>
         </div>
     </div>
