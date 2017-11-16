@@ -1,0 +1,21 @@
+.plusminuslist {
+    list-style: none;
+}
+
+.plusitem {
+    color: #f4ad42;
+}
+
+.minusitem {
+    color: #6c94cc;
+}
+
+.plusitem:before {
+    content: "+";
+    margin-right: 4px;
+}
+
+.minusitem:before {
+    content: "-";
+    margin-right: 4px;
+}
