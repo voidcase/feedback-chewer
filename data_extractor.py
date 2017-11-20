@@ -4,7 +4,7 @@ import util
 import requests
 import pickle
 import os
-import re
+import random
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.feature_selection import VarianceThreshold
 from sklearn import preprocessing
@@ -13,7 +13,7 @@ import wordset
 def data_extract_comments(config=util.DEFAULT_CONFIG):
     df = pd.read_csv(util.FEEDBACK_DATA)[util.TEXT_HEADERS + [util.TARGET]]
     df = df.fillna('')
-    y = df[util.TARGET]
+    y = binarize_scores(df[util.TARGET])
     df = df.drop([util.TARGET], axis=1)
     df['supercomment'] = ""
     for header in df:
@@ -122,6 +122,7 @@ def get_txt_lineset(filename: str) -> set:
     with open(filename, 'r', encoding='utf-8') as datafile:
         return set(x.strip() for x in datafile)
 
+
 def parse_word_vectors(filename:str) -> dict:
     try:
         cache = pickle.load(open(util.WORDVEC_PICKLE_FILE, 'rb'))
@@ -138,3 +139,11 @@ def parse_word_vectors(filename:str) -> dict:
                    for line in lines}
             pickle.dump(vectors, open(util.WORDVEC_PICKLE_FILE, 'wb'))
             return vectors
+
+def binarize_scores(y:list):
+    return [
+        1 if score > 3
+            else 0 if score < 3
+            else random.randint(0,1) # score == 3
+        for score in y
+    ]
