@@ -22,6 +22,7 @@ DATASET_PATH = 'datasets/'
 FEEDBACK_DATA = DATASET_PATH + 'feedback.csv'
 POSITIVE_DATA = DATASET_PATH + 'positive_words_utf8.txt'
 NEGATIVE_DATA = DATASET_PATH + 'negative_words_utf8.txt'
+WORDVEC_DATA = DATASET_PATH + 'word_vectors.txt'
 VILDE_PICKLE_FILE = 'pickles/vilde.pickle'
 DROPTEST = ['Proposal'] + SCORE_TYPES + EXTERNAL_FACTOR_HEADERS + DATE_HEADERS
 TARGET = 'Overall'

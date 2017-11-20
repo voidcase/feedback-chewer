@@ -112,3 +112,9 @@ def dependency_parse(comment, cache_file=util.VILDE_PICKLE_FILE):
 def get_txt_lineset(filename: str) -> set:
     with open(filename, 'r', encoding='utf-8') as datafile:
         return set(x.strip() for x in datafile)
+
+def parse_word_vectors(filename:str) -> dict:
+    with open(filename, 'r', encoding='utf-8') as datafile:
+        lines = [next(datafile) for n in range(200)]
+        return {line.split()[0]: np.array([float(v) for v in line.split()[1:]])
+               for line in lines}

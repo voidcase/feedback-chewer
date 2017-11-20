@@ -175,3 +175,4 @@ fabric.properties
 .*.swp
 .swp
 *.pickle
+datasets/word_vectors.txt
