@@ -13,6 +13,7 @@ import wordset
 def data_extract_comments(config=util.DEFAULT_CONFIG):
     df = pd.read_csv(util.FEEDBACK_DATA)[util.TEXT_HEADERS + [util.TARGET]]
     df = df.fillna('')
+    df = df.drop(df[df[util.TARGET] == 0].index)
     y = binarize_scores(df[util.TARGET])
     df = df.drop([util.TARGET], axis=1)
     df['supercomment'] = ""
@@ -20,6 +21,7 @@ def data_extract_comments(config=util.DEFAULT_CONFIG):
         df['supercomment'] += df[header]
     df = df.drop(util.TEXT_HEADERS, axis=1)
     df['supercomment'] = [[c.lower() for c in wordset.tokenize(comment)] for comment in df['supercomment']]
+    print(df)
     return df, y
 
 def data_extract(config: dict = util.DEFAULT_CONFIG) -> pd.DataFrame:
