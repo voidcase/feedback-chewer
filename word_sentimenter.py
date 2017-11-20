@@ -69,6 +69,7 @@ def create_dict(comment: Comment):
     for i in neg_nouns: dict[comment.lemmas[i]] = -1
     return dict
 
-dict = create_dict(Comment('The laboratory is perfect'))
+def positivity(comment: Comment):
+    posi, nega = find_posi_nega_tokens(comment)
+    return len(posi) - len(nega)
 
-print(dict)
