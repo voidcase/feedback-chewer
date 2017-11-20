@@ -41,3 +41,4 @@ Overall grades:
 1: 26 times
 0: 103 times -> some people did not answer anything or forgot the overall grade
 
+number of words in word embedding corpus: 1376399

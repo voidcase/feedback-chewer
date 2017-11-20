@@ -22,8 +22,16 @@ def test_sentimenter():
     annotated = ws.sentiment_annotate('We had problems with very low intensity all afternoon, but the food was nice')
     print(annotated)
 
+def test_wordvec_parser():
+    print('\nWORDVEC PARSER')
+    word_vectors = data_extractor.parse_word_vectors(util.WORDVEC_DATA)
+    the_vector = word_vectors['the']
+    print(the_vector)
+    print('len:',len(the_vector))
+    print('type:',type(the_vector))
 
 if __name__ == '__main__':
     test_dep_parse()
-    test_sentimenter()
+    #test_sentimenter()
+    test_wordvec_parser()
     print('done!')
