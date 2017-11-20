@@ -10,6 +10,18 @@ from sklearn.feature_selection import VarianceThreshold
 from sklearn import preprocessing
 import wordset
 
+def data_extract_comments(config=util.DEFAULT_CONFIG):
+    df = pd.read_csv(util.FEEDBACK_DATA)[util.TEXT_HEADERS + [util.TARGET]]
+    df = df.fillna('')
+    y = binarize_scores(df[util.TARGET])
+    df = df.drop([util.TARGET], axis=1)
+    df['supercomment'] = ""
+    for header in df:
+        df['supercomment'] += df[header]
+    df = df.drop(util.TEXT_HEADERS, axis=1)
+    df['supercomment'] = [[c.lower() for c in wordset.tokenize(comment)] for comment in df['supercomment']]
+    return df, y
+
 def data_extract(config: dict = util.DEFAULT_CONFIG) -> pd.DataFrame:
     df = pd.read_csv(util.FEEDBACK_DATA).drop(util.DROPTEST, axis=1)
     df = df.fillna('')
@@ -109,6 +121,7 @@ def dependency_parse(comment, cache_file=util.VILDE_PICKLE_FILE):
 def get_txt_lineset(filename: str) -> set:
     with open(filename, 'r', encoding='utf-8') as datafile:
         return set(x.strip() for x in datafile)
+
 
 def parse_word_vectors(filename:str) -> dict:
     try:
