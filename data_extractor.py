@@ -8,6 +8,22 @@ from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.feature_selection import VarianceThreshold
 from sklearn import preprocessing
 
+def data_extract_comments(config=util.DEFAULT_CONFIG):
+    df = pd.read_csv(util.FEEDBACK_DATA)[util.TEXT_HEADERS + [util.TARGET]]
+    df = df.fillna('')
+    y = df[util.TARGET]
+    df = df.drop([util.TARGET], axis=1)
+    df['supercomment'] = ""
+    for header in df:
+        df['supercomment'] += df[header]
+    df = df.drop(util.TEXT_HEADERS, axis=1)
+    vectorizer = TfidfVectorizer(stop_words=None)
+    df = vectorizer.fit_transform(df['supercomment'])
+    print(vectorizer.vocabulary_)
+    print(df[1])
+    return df, y
+
+data_extract_comments()
 
 def data_extract(config: dict = util.DEFAULT_CONFIG) -> pd.DataFrame:
     df = pd.read_csv(util.FEEDBACK_DATA).drop(util.DROPTEST, axis=1)
