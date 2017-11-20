@@ -25,6 +25,7 @@ def test_sentimenter():
 def test_wordvec_parser():
     print('\nWORDVEC PARSER')
     word_vectors = data_extractor.parse_word_vectors(util.WORDVEC_DATA)
+    print(word_vectors)
     the_vector = word_vectors['the']
     print(the_vector)
     print('len:',len(the_vector))

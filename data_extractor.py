@@ -7,6 +7,7 @@ import os
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.feature_selection import VarianceThreshold
 from sklearn import preprocessing
+import wordset
 
 def data_extract_comments(config=util.DEFAULT_CONFIG):
     df = pd.read_csv(util.FEEDBACK_DATA)[util.TEXT_HEADERS + [util.TARGET]]
@@ -77,14 +78,10 @@ def supercomment(df: pd.DataFrame):
     values = df['supercomment'].values
     vectorizer = TfidfVectorizer(stop_words='english', min_df=util.MIN_DF)
     tfidf_matrix = vectorizer.fit_transform(values).toarray()
-    #   vectorizer = CountVectorizer(stop_words='english', min_df=util.MIN_DF)
-    #   matrix = vectorizer.fit_transform(values).toarray()
     featurenames = np.asarray(vectorizer.get_feature_names())
     tfidf_frame = pd.DataFrame(tfidf_matrix, columns=featurenames)
-    #   tf_frame = pd.DataFrame(matrix, columns=featurenames)
     df = df.drop(util.TEXT_HEADERS + ['supercomment'], axis=1)
     df = pd.concat([df, tfidf_frame], axis=1)
-    #   df = pd.concat([df, tf_frame], axis=1)
     return df
 
 
@@ -130,7 +127,18 @@ def get_txt_lineset(filename: str) -> set:
         return set(x.strip() for x in datafile)
 
 def parse_word_vectors(filename:str) -> dict:
-    with open(filename, 'r', encoding='utf-8') as datafile:
-        lines = [next(datafile) for n in range(200)]
-        return {line.split()[0]: np.array([float(v) for v in line.split()[1:]])
-               for line in lines}
+    try:
+        cache = pickle.load(open(util.WORDVEC_PICKLE_FILE, 'rb'))
+        print('word vectors loaded from pickle')
+        return cache
+    except FileNotFoundError:
+        with open(filename, 'r', encoding='utf-8') as datafile:
+            print('no pickled word vectors found, filtering original corpus, this might take a while...')
+            used_words = wordset.build_wordset(get_all_data(), util.TEXT_HEADERS)
+            print('dbg: used words:', len(used_words))
+            lines = [l for l in datafile if l.split()[0] in used_words]
+            print('dbg: lines:', len(lines))
+            vectors = {line.split()[0]: np.array([float(v) for v in line.split()[1:]])
+                   for line in lines}
+            pickle.dump(vectors, open(util.WORDVEC_PICKLE_FILE, 'wb'))
+            return vectors
