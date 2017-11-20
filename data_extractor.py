@@ -4,11 +4,11 @@ import util
 import requests
 import pickle
 import os
+import random
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.feature_selection import VarianceThreshold
 from sklearn import preprocessing
 import wordset
-
 
 def data_extract(config: dict = util.DEFAULT_CONFIG) -> pd.DataFrame:
     df = pd.read_csv(util.FEEDBACK_DATA).drop(util.DROPTEST, axis=1)
@@ -126,3 +126,11 @@ def parse_word_vectors(filename:str) -> dict:
                    for line in lines}
             pickle.dump(vectors, open(util.WORDVEC_PICKLE_FILE, 'wb'))
             return vectors
+
+def binarize_scores(y:list):
+    return [
+        1 if score > 3
+            else 0 if score < 3
+            else random.randint(0,1) # score == 3
+        for score in y
+    ]
