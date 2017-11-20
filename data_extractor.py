@@ -122,12 +122,15 @@ def parse_word_vectors(filename:str) -> dict:
             print('dbg: used words:', len(used_words))
             lines = [l for l in datafile if l.split()[0] in used_words]
             print('dbg: lines:', len(lines))
-            vectors = {line.split()[0]: np.array([float(v) for v in line.split()[1:]])
-                   for line in lines}
+            vectors = {
+                line.split()[0]:
+                    np.array([float(v) for v in line.split()[1:]])
+                    for line in lines
+            }
             pickle.dump(vectors, open(util.WORDVEC_PICKLE_FILE, 'wb'))
             return vectors
 
-def binarize_scores(y:list):
+def binarize_scores(y:list) -> list:
     return [
         1 if score > 3
             else 0 if score < 3
