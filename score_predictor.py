@@ -8,12 +8,10 @@ from sklearn import svm
 from embedding_vectorizer import EmbeddingVectorizer
 from data_extractor import data_extract_comments, parse_word_vectors, create_word_embeddings
 
-w2v_dict = parse_word_vectors(util.WORDVEC_DATA)
-x, y = data_extract_comments()
-w2v_own_dict = create_word_embeddings(x['supercomment'])
 def cross_validate() -> dict:
     w2v_dict = parse_word_vectors(util.WORDVEC_DATA)
     x, y = data_extract_comments()
+    w2v_own_dict = create_word_embeddings(x['supercomment'])
     classifiers = [
         ("svm", svm.SVC()),
         ("logistic regression", LogisticRegression()),
@@ -24,7 +22,7 @@ def cross_validate() -> dict:
 
     models_with_word_embedding = {
         label: Pipeline([
-            ('embedding vectorizer', EmbeddingVectorizer(w2v_dict)),
+            ('embedding vectorizer', EmbeddingVectorizer(w2v_own_dict)),
             (label, clf)
         ])
         for label, clf in classifiers
