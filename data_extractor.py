@@ -21,7 +21,6 @@ def data_extract_comments(config=util.DEFAULT_CONFIG):
         df['supercomment'] += df[header]
     df = df.drop(util.TEXT_HEADERS, axis=1)
     df['supercomment'] = [[c.lower() for c in wordset.tokenize(comment)] for comment in df['supercomment']]
-    print(df)
     return df, y
 
 def data_extract(config: dict = util.DEFAULT_CONFIG) -> pd.DataFrame:
@@ -142,10 +141,11 @@ def parse_word_vectors(filename:str) -> dict:
             pickle.dump(vectors, open(util.WORDVEC_PICKLE_FILE, 'wb'))
             return vectors
 
+
 def binarize_scores(y:list):
     return [
         1 if score > 3
-            else 0 if score < 3
-            else random.randint(0,1) # score == 3
+            else 0 if score <= 3
+        else random.randint(0,1) # score == 3
         for score in y
     ]

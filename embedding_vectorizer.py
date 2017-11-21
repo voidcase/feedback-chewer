@@ -18,8 +18,9 @@ class EmbeddingVectorizer():
         return self
 
     def transform(self, x:pd.DataFrame):
-            vectors = [np.mean([self.weight_dict[w]* self.w2v_dict[w] for w in comment if w in self.w2v_dict]
-                               or [np.zeros(util.NUMBER_DIMENSIONS)], axis=0) for comment in x['supercomment']]
+            vectors = np.array([ np.mean([self.weight_dict[w]* self.w2v_dict[w] for w in comment if w in self.w2v_dict]
+                               or [np.zeros(util.NUMBER_DIMENSIONS)], axis=0) for comment in x['supercomment']])
+            print('embeddingvectorizer', vectors[0])
             return vectors
 
 
