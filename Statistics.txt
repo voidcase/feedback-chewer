@@ -44,6 +44,7 @@ Overall grades:
 number of words in word embedding corpus: 1376399
 
 
+STATISTICS WITH BINARIZING, +weighted wordembedding
 f1 scores:
 random forest:  [ 0.88732394  0.90102389  0.90245971]
 Logistic regression:  [ 0.87555953  0.89124668  0.89539007]
@@ -59,7 +60,6 @@ Logistic regression without wordembedding:  [ 0.83577236  0.82098765  0.82352941
 SVM without wordembedding:  [ 0.81526718  0.81498471  0.81623277]
 SVM with wordembedding   :  [ 0.81526718  0.81498471  0.81623277]
 Extra trees: [ 0.84219269  0.82270607  0.82225657]
-
 
 recall:
 random forest:  [ 0.95131086  0.98874296  0.99624765]
