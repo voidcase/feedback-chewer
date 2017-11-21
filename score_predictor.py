@@ -11,28 +11,27 @@ from data_extractor import data_extract_comments, parse_word_vectors, create_wor
 w2v_dict = parse_word_vectors(util.WORDVEC_DATA)
 x, y = data_extract_comments()
 w2v_own_dict = create_word_embeddings(x['supercomment'])
+def cross_validate() -> dict:
+    w2v_dict = parse_word_vectors(util.WORDVEC_DATA)
+    x, y = data_extract_comments()
+    classifiers = [
+        ("svm", svm.SVC()),
+        ("logistic regression", LogisticRegression()),
+        ("GaussianNB", GaussianNB()),
+        ("extra trees", ExtraTreesClassifier(n_estimators=150)),
+        ("random forest", RandomForestClassifier(n_estimators=200)),
+    ]
 
-svm_w2v = Pipeline([("embedding vectorizer", EmbeddingVectorizer(w2v_dict)),
-                    ("svm", svm.SVC(kernel='linear'))])
+    models_with_word_embedding = {
+        label: Pipeline([
+            ('embedding vectorizer', EmbeddingVectorizer(w2v_dict)),
+            (label, clf)
+        ])
+        for label, clf in classifiers
+    }
 
-logr_w2v = Pipeline([("embedding vectorizer", EmbeddingVectorizer(w2v_dict)),
-                    ("logistic regression", LogisticRegression())])
-
-nb_w2v = Pipeline([("embedding vectorizer", EmbeddingVectorizer(w2v_dict)),
-                    ("logistic regression", GaussianNB())])
-
-etrees_w2v = Pipeline([("embedding vectorizer", EmbeddingVectorizer(w2v_dict)),
-                    ("extra trees", ExtraTreesClassifier(n_estimators=150))])
-
-randomforest_w2v = Pipeline([("embedding vectorizer", EmbeddingVectorizer(w2v_dict)),
-                    ("extra trees", RandomForestClassifier(n_estimators=200))])
-
-# cv_score_nb = cross_val_score(nb_w2v,x,y)
-# cv_score_logr = cross_val_score(logr_w2v, x, y)
-# cv_score_etrees = cross_val_score(etrees_w2v,x,y)
-# cv_score_randomforest = cross_val_score(randomforest_w2v,x,y,scoring='precision')
-# cv_score_svm_w2v = cross_val_score(svm_w2v,x,y)
-# print(cv_score_svm_w2v)
-
-
-
+    cv_precisions = {
+        label: cross_val_score(model, x, y, scoring='precision')
+        for label, model in models_with_word_embedding.items()
+    }
+    return cv_precisions

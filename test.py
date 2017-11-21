@@ -1,8 +1,9 @@
 import data_extractor
 import util
 import os
-import word_sentimenter as ws
 from pprint import pprint
+
+import score_predictor as sp
 
 def test_dep_parse():
     print("DEPENDENCY PARSING")
@@ -39,9 +40,11 @@ def test_binarized_variance():
     print('number of 1\'s: ', len([i for i in y if i == 1]))
     print('number of 0\'s: ', len([i for i in y if i == 0]))
 
+def test_cross_validation():
+    cv_precisions = sp.cross_validate()
+    for label, score in cv_precisions.items():
+        print(label,'\n\t',score)
+
 if __name__ == '__main__':
-    #test_dep_parse()
-    #test_sentimenter()
-    #test_wordvec_parser()
-    test_binarized_variance()
+    test_cross_validation()
     print('done!')
