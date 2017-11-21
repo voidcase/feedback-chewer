@@ -41,6 +41,13 @@ def data_extract_comments(config=util.DEFAULT_CONFIG):
     # print(df)
     return df, y
 
+def data_extract_tfidf_comments(config=util.DEFAULT_CONFIG):
+    df = data_extract(config)[0]
+    values = df['supercomment'].values
+    vectorizer = TfidfVectorizer(stop_words=None, analyzer=lambda x: x)
+    tfidf_matrix = vectorizer.fit_transform(values).toarray()
+    return tfidf_matrix
+
 def data_extract(config: dict = util.DEFAULT_CONFIG) -> pd.DataFrame:
     df = pd.read_csv(util.FEEDBACK_DATA).drop(util.DROPTEST, axis=1)
     df = df.fillna('')
@@ -174,8 +181,10 @@ def binarize_scores(y:list) -> list:
 def create_word_embeddings(x:list) -> dict:
     try:
         cache = pickle.load(open(util.OWN_WORDVEC_PICKLE_FILE, 'rb'))
+        print("own word vectors loaded from pickle")
         return cache
     except FileNotFoundError:
+        print("no pickled words found, training word embeddings")
         model = gensim.models.Word2Vec(x, size=100)
         w2v_dict = dict(zip(model.wv.index2word, model.wv.syn0))
         pickle.dump(w2v_dict, open(util.OWN_WORDVEC_PICKLE_FILE, 'wb'))
