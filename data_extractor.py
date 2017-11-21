@@ -42,7 +42,7 @@ def data_extract_comments(config=util.DEFAULT_CONFIG):
     return df, y
 
 def data_extract_tfidf_comments(config=util.DEFAULT_CONFIG):
-    df = data_extract(config)[0]
+    df = data_extract_comments(config)[0]
     values = df['supercomment'].values
     vectorizer = TfidfVectorizer(stop_words=None, analyzer=lambda x: x)
     tfidf_matrix = vectorizer.fit_transform(values).toarray()
