@@ -6,8 +6,11 @@ from sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn import svm
 from embedding_vectorizer import EmbeddingVectorizer
-from data_extractor import data_extract_comments, parse_word_vectors
+from data_extractor import data_extract_comments, parse_word_vectors, create_word_embeddings
 
+w2v_dict = parse_word_vectors(util.WORDVEC_DATA)
+x, y = data_extract_comments()
+w2v_own_dict = create_word_embeddings(x['supercomment'])
 def cross_validate() -> dict:
     w2v_dict = parse_word_vectors(util.WORDVEC_DATA)
     x, y = data_extract_comments()

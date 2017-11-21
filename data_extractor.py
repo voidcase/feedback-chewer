@@ -9,6 +9,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.feature_selection import VarianceThreshold
 from sklearn import preprocessing
 import wordset
+import gensim
 
 def all_scores(df:pd.DataFrame) -> list:
     num_rows = df.shape[0]
@@ -161,10 +162,21 @@ def parse_word_vectors(filename:str) -> dict:
             pickle.dump(vectors, open(util.WORDVEC_PICKLE_FILE, 'wb'))
             return vectors
 
+
 def binarize_scores(y:list) -> list:
     return [
         1 if score > 3
-            else 0 if score < 3
-            else random.randint(0,1) # score == 3
+            else 0 # if score < 3
+            # else random.randint(0,1) # score == 3
         for score in y
     ]
+
+def create_word_embeddings(x:list) -> dict:
+    try:
+        cache = pickle.load(open(util.OWN_WORDVEC_PICKLE_FILE, 'rb'))
+        return cache
+    except FileNotFoundError:
+        model = gensim.models.Word2Vec(x, size=100)
+        w2v_dict = dict(zip(model.wv.index2word, model.wv.syn0))
+        pickle.dump(w2v_dict, open(util.OWN_WORDVEC_PICKLE_FILE, 'wb'))
+        return w2v_dict
