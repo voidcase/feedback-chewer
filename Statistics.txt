@@ -42,3 +42,30 @@ Overall grades:
 0: 103 times -> some people did not answer anything or forgot the overall grade
 
 number of words in word embedding corpus: 1376399
+
+
+f1 scores:
+random forest:  [ 0.88732394  0.90102389  0.90245971]
+Logistic regression:  [ 0.87555953  0.89124668  0.89539007]
+Logisic regression without wordembedding:  [ 0.89469104  0.90093141  0.90245971]
+SVM without wordembedding:  [ 0.89823381  0.89806234  0.89881956]
+SVM with wordembedding:  [ 0.89823381  0.89806234  0.89881956]
+Extra trees: [ 0.89552239  0.89837746  0.90093141]
+
+precision:
+random forest:  [ 0.83823529  0.8271028   0.81888545]
+Logistic regression:  [ 0.83876501  0.84280936  0.8487395 ]
+Logistic regression without wordembedding:  [ 0.83577236  0.82098765  0.82352941]
+SVM without wordembedding:  [ 0.81526718  0.81498471  0.81623277]
+SVM with wordembedding   :  [ 0.81526718  0.81498471  0.81623277]
+Extra trees: [ 0.84219269  0.82270607  0.82225657]
+
+
+recall:
+random forest:  [ 0.95131086  0.98874296  0.99624765]
+Logistic regression:  [ 0.91573034  0.94559099  0.94746717]
+Logistic regression without wordembedding:  [ 0.96254682  0.99812383  0.99812383]
+SVM without wordembedding:  [ 1.  1.  1.]
+SVM with wordembedding:  [ 1.  1.  1.]
+Extra trees: [ 0.94382022  0.99061914  0.99624765]
+
