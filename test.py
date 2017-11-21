@@ -19,8 +19,8 @@ def test_dep_parse():
 
 def test_sentimenter():
     print('\nSENTIMENTER')
-    annotated = ws.sentiment_annotate('We had problems with very low intensity all afternoon, but the food was nice')
-    print(annotated)
+    #annotated = ws.sentiment_annotate('We had problems with very low intensity all afternoon, but the food was nice')
+    #print(annotated)
 
 def test_wordvec_parser():
     print('\nWORDVEC PARSER')
@@ -28,11 +28,20 @@ def test_wordvec_parser():
     print(word_vectors)
     the_vector = word_vectors['the']
     print(the_vector)
-    print('len:',len(the_vector))
-    print('type:',type(the_vector))
+    print('len:', len(the_vector))
+    print('type:', type(the_vector))
+
+def test_avg():
+    print(data_extractor.get_avg_target(data_extractor.get_all_data()))
+
+def test_binarized_variance():
+    df, y = data_extractor.data_extract_comments()
+    print('number of 1\'s: ', len([i for i in y if i == 1]))
+    print('number of 0\'s: ', len([i for i in y if i == 0]))
 
 if __name__ == '__main__':
-    test_dep_parse()
+    #test_dep_parse()
     #test_sentimenter()
-    test_wordvec_parser()
+    #test_wordvec_parser()
+    test_binarized_variance()
     print('done!')
