@@ -28,7 +28,7 @@ def cross_validate() -> dict:
     }
 
     cv_precisions = {
-        label: cross_val_score(model, x, y, scoring='precision')
+        label: cross_val_score(model, x, y, scoring='f1')
         for label, model in models_with_word_embedding.items()
     }
     return cv_precisions
