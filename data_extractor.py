@@ -10,17 +10,34 @@ from sklearn.feature_selection import VarianceThreshold
 from sklearn import preprocessing
 import wordset
 
+def all_scores(df:pd.DataFrame) -> list:
+    num_rows = df.shape[0]
+    return [
+        [df.iloc[i][t] for t in util.SCORE_TYPES]
+        for i in range(num_rows)
+    ]
+
+def get_avg_target(df:pd.DataFrame) -> list:
+    scores = all_scores(df)
+    averages = [sum(s)/len(s) for s in scores]
+    return averages
+
+def get_lowest_target(df:pd.DataFrame) -> list:
+    scores = all_scores(df)
+    return [min(s) for s in scores]
+
 def data_extract_comments(config=util.DEFAULT_CONFIG):
-    df = pd.read_csv(util.FEEDBACK_DATA)[util.TEXT_HEADERS + [util.TARGET]]
+    df = pd.read_csv(util.FEEDBACK_DATA)[util.TEXT_HEADERS + util.SCORE_TYPES]
     df = df.fillna('')
-    df = df.drop(df[df[util.TARGET] == 0].index)
-    y = binarize_scores(df[util.TARGET])
-    df = df.drop([util.TARGET], axis=1)
+    df = df.drop(df[df['Overall'] == 0].index)
+    y = binarize_scores(get_lowest_target(df))
+    df = df.drop(util.SCORE_TYPES, axis=1)
     df['supercomment'] = ""
     for header in df:
         df['supercomment'] += df[header]
     df = df.drop(util.TEXT_HEADERS, axis=1)
     df['supercomment'] = [[c.lower() for c in wordset.tokenize(comment)] for comment in df['supercomment']]
+    # print(df)
     return df, y
 
 def data_extract(config: dict = util.DEFAULT_CONFIG) -> pd.DataFrame:
@@ -136,11 +153,15 @@ def parse_word_vectors(filename:str) -> dict:
             print('dbg: used words:', len(used_words))
             lines = [l for l in datafile if l.split()[0] in used_words]
             print('dbg: lines:', len(lines))
-            vectors = {line.split()[0]: np.array([float(v) for v in line.split()[1:]])
-                   for line in lines}
+            vectors = {
+                line.split()[0]:
+                    np.array([float(v) for v in line.split()[1:]])
+                    for line in lines
+            }
             pickle.dump(vectors, open(util.WORDVEC_PICKLE_FILE, 'wb'))
             return vectors
 
+def binarize_scores(y:list) -> list:
 
 def binarize_scores(y:list):
     return [

@@ -29,7 +29,7 @@ randomforest_w2v = Pipeline([("embedding vectorizer", EmbeddingVectorizer(w2v_di
 cv_score_nb = cross_val_score(nb_w2v,x,y)
 cv_score_logr = cross_val_score(logr_w2v, x, y)
 cv_score_etrees = cross_val_score(etrees_w2v,x,y)
-cv_score_randomforest = cross_val_score(randomforest_w2v,x,y)
+cv_score_randomforest = cross_val_score(randomforest_w2v,x,y,scoring='precision')
 print(cv_score_randomforest)
 
 
