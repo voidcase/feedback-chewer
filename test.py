@@ -1,6 +1,7 @@
 import data_extractor
 import util
 import os
+import random
 from pprint import pprint
 
 import score_predictor as sp
@@ -45,6 +46,11 @@ def test_cross_validation():
     for label, score in cv_precisions.items():
         print(label,'\n\t',score)
 
+def test_print_example_predictions():
+    df, y = data_extractor.data_extract_comments()
+    non_empties = [comment for comment in df['supercomment'] if comment != []]
+    for c in non_empties:
+        print(c)
 if __name__ == '__main__':
-    test_cross_validation()
+    test_print_example_predictions()
     print('done!')
