@@ -39,7 +39,7 @@ def data_extract_comments(config=util.DEFAULT_CONFIG):
         df['supercomment'] += df[header]
     df = df.drop(util.TEXT_HEADERS, axis=1)
     df['supercomment'] = [[c.lower() for c in wordset.tokenize(comment)] for comment in df['supercomment']]
-    df['supercomment'] = auto_correct(df['supercomment'])
+    # df['supercomment'] = auto_correct(df['supercomment'])
     # print(df)
     return df, y
 
@@ -85,7 +85,7 @@ def auto_correct(comments: list) -> list:
         return cache
     except FileNotFoundError:
         corrected = [[autocorrect.spell(word) for word in comment] for comment in comments]
-        pickle._dump(corrected, open(util.AUTOCORRECT_PICKLE_FILE, 'wb'))
+        pickle.dump(corrected, open(util.AUTOCORRECT_PICKLE_FILE, 'wb'))
         return corrected
 
 def sep_comments(df: pd.DataFrame):
