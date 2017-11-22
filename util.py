@@ -35,4 +35,4 @@ DEFAULT_CONFIG = {
     'variance_threshold': 0.001,
     'droplist': ['Proposal'] + SCORE_TYPES + EXTERNAL_FACTOR_HEADERS + DATE_HEADERS
 }
-NUMBER_DIMENSIONS = 100
+NUMBER_DIMENSIONS = 256
