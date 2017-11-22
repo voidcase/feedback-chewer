@@ -51,6 +51,7 @@ def test_print_example_predictions():
     non_empties = [comment for comment in df['supercomment'] if comment != []]
     for c in non_empties:
         print(c)
+
 if __name__ == '__main__':
-    test_print_example_predictions()
+    test_cross_validation()
     print('done!')

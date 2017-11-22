@@ -9,11 +9,14 @@ from sklearn import svm
 from embedding_vectorizer import EmbeddingVectorizer
 from data_extractor import data_extract_comments, parse_word_vectors, data_extract_tfidf_comments, create_word_embeddings
 
-def cross_validate() -> dict:
-    w2v_dict = parse_word_vectors(util.WORDVEC_DATA)
-    x, y = data_extract_comments()
-    tfidf_matrix = data_extract_tfidf_comments()
-    #w2v_own_dict = create_word_embeddings(x['supercomment'])
+def make_models(w2v=False, own=False) -> dict:
+    w2v_dict = {}
+    if w2v:
+        if own:
+            w2v_dict = create_word_embeddings(x['supercomment'])
+        else:
+            w2v_dict = parse_word_vectors(util.WORDVEC_DATA)
+
     classifiers = [
         ("logistic regression", LogisticRegression()),
         ("GaussianNB", GaussianNB()),
@@ -22,19 +25,19 @@ def cross_validate() -> dict:
         ("svm", svm.SVC())
     ]
 
-    models_with_word_embedding = {
-        label: Pipeline([
-            ('embedding vectorizer', EmbeddingVectorizer(w2v_dict)),
-            (label, clf)
-        ])
+    return {
+        label + ' with w2v'*w2v : Pipeline(
+            [('embedding vectorizer', EmbeddingVectorizer(w2v_dict))] * w2v + [(label, clf)]
+        )
         for label, clf in classifiers
     }
-    models_without_word_embedding = {
-        label + " without wordembedding": Pipeline([
-            (label, clf)
-        ])
-        for label, clf in classifiers
-    }
+
+def cross_validate() -> dict:
+    x, y = data_extract_comments()
+    tfidf_matrix = data_extract_tfidf_comments()
+
+    models_with_word_embedding = make_models(w2v=True, own=False)
+    models_without_word_embedding = make_models(w2v=False, own=False)
 
     cv_precisions_with = {
         label: cross_val_score(model, x, y, scoring='f1')
