@@ -39,7 +39,6 @@ def cross_val() -> dict:
     w2v_dict = parse_word_vectors(util.WORDVEC_DATA)
     x, y = data_extract_comments()
     tfidf_matrix = data_extract_tfidf_comments()
-    cm(LogisticRegression(), tfidf_matrix, y)
     #w2v_own_dict = create_word_embeddings(x['supercomment'])
     classifiers = [
         ("logistic regression", LogisticRegression()),
