@@ -176,3 +176,4 @@ fabric.properties
 .swp
 *.pickle
 datasets/word_vectors.txt
+datasets/reviews_Electronics_5.json
