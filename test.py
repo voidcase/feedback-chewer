@@ -3,6 +3,7 @@ import util
 import os
 import random
 from pprint import pprint
+from sklearn.model_selection import train_test_split
 
 import score_predictor as sp
 
@@ -43,14 +44,22 @@ def test_binarized_variance():
 
 def test_cross_validation():
     cv_precisions = sp.cross_validate()
-    for label, score in cv_precisions.items():
-        print(label,'\n\t',score)
+    for label, scores in cv_precisions.items():
+        print(label,'\n\t',scores)
+    minscores = {label: min(scores) for label, scores in cv_precisions.items()}
+    print('highest lowest:', max(minscores,key=minscores.get))
 
 def test_print_example_predictions():
-    df, y = data_extractor.data_extract_comments()
-    non_empties = [comment for comment in df['supercomment'] if comment != []]
-    for c in non_empties:
-        print(c)
+    x, y = data_extractor.data_extract_comments()
+
+    #non_empties = [comment for comment in x['supercomment'] if comment != []]
+    models = sp.make_models(w2v=True)
+    x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.05)
+    for label, model in models.items():
+        model.fit(x_train, y_train)
+    print(x_test.head(3))
+    for label, model in models.items():
+        print(label, ':', model.predict(x_test.head(3)))
 
 if __name__ == '__main__':
     test_cross_validation()
