@@ -2,7 +2,9 @@ import data_extractor
 import util
 import os
 import random
+from sklearn import svm, ensemble
 from pprint import pprint
+import numpy as np
 from sklearn.model_selection import train_test_split
 
 import score_predictor as sp
@@ -28,9 +30,7 @@ def test_sentimenter():
 def test_wordvec_parser():
     print('\nWORDVEC PARSER')
     word_vectors = data_extractor.parse_word_vectors(util.WORDVEC_DATA)
-    print(word_vectors)
     the_vector = word_vectors['the']
-    print(the_vector)
     print('len:', len(the_vector))
     print('type:', type(the_vector))
 
@@ -43,11 +43,16 @@ def test_binarized_variance():
     print('number of 0\'s: ', len([i for i in y if i == 0]))
 
 def test_cross_validation():
-    cv_precisions = sp.cross_validate()
+    cv_precisions = sp.cross_val()
     for label, scores in cv_precisions.items():
         print(label,'\n\t',scores)
     minscores = {label: min(scores) for label, scores in cv_precisions.items()}
     print('highest lowest:', max(minscores,key=minscores.get))
+
+def test_confusion_matrix():
+    x,y = data_extractor.data_extract_comments()
+    tfidf = data_extractor.data_extract_tfidf_comments()
+    sp.cm(ensemble.ExtraTreesClassifier(n_estimators=150), tfidf, y)
 
 def test_print_example_predictions():
     x, y = data_extractor.data_extract_comments()
