@@ -10,7 +10,7 @@ from sklearn.feature_selection import VarianceThreshold
 from sklearn import preprocessing
 import autocorrect
 import wordset
-import gensim
+# import gensim
 
 def all_scores(df:pd.DataFrame) -> list:
     num_rows = df.shape[0]
@@ -82,6 +82,7 @@ def data_extract(config: dict = util.DEFAULT_CONFIG) -> pd.DataFrame:
 def auto_correct(comments: list) -> list:
     try:
         cache = pickle.load(open(util.AUTOCORRECT_PICKLE_FILE, 'rb'))
+        print("autocorrected words loaded from pickle")
         return cache
     except FileNotFoundError:
         corrected = [[autocorrect.spell(word) for word in comment] for comment in comments]
@@ -167,18 +168,23 @@ def parse_word_vectors(filename:str) -> dict:
     except FileNotFoundError:
         with open(filename, 'r', encoding='utf-8') as datafile:
             print('no pickled word vectors found, filtering original corpus, this might take a while...')
-            used_words = wordset.build_wordset(get_all_data(), util.TEXT_HEADERS)
-            print('dbg: used words:', len(used_words))
-            lines = [l for l in datafile if l.split()[0] in used_words]
+            lines = [l for l in datafile][:100000]
             print('dbg: lines:', len(lines))
             vectors = {
                 line.split()[0]:
-                    np.array([float(v) for v in line.split()[1:]])
+                    np.array(normalize_vector([float(v) for v in line.split()[1:]]))
                     for line in lines
             }
+            print("lotta is boos")
             pickle.dump(vectors, open(util.WORDVEC_PICKLE_FILE, 'wb'))
             return vectors
 
+def normalize_vector(vector:list) -> list:
+    norm = np.linalg.norm(vector)
+    if norm == 0:
+        return vector
+    else:
+        return vector / norm
 
 def binarize_scores(y:list) -> list:
     return [
