@@ -46,75 +46,125 @@ number of words in word embedding corpus: 1376399
 
 STATISTICS WITH BINARIZING, +weighted wordembedding
 f1 scores:
-random forest:  [ 0.88732394  0.90102389  0.90245971]
-Logistic regression:  [ 0.87555953  0.89124668  0.89539007]
-Logisic regression without wordembedding:  [ 0.89469104  0.90093141  0.90245971]
-SVM without wordembedding:  [ 0.89823381  0.89806234  0.89881956]
-SVM with wordembedding:  [ 0.89823381  0.89806234  0.89881956]
-Extra trees: [ 0.89552239  0.89837746  0.90093141]
+random forest:  0.9
+Logistic regression:  0.9
+Logisic regression without wordembedding:  0.9
+SVM without wordembedding:  0.9
+SVM with wordembedding:  0.9
+Extra trees: 0.9
 
 precision:
-random forest:  [ 0.83823529  0.8271028   0.81888545]
-Logistic regression:  [ 0.83876501  0.84280936  0.8487395 ]
-Logistic regression without wordembedding:  [ 0.83577236  0.82098765  0.82352941]
-SVM without wordembedding:  [ 0.81526718  0.81498471  0.81623277]
-SVM with wordembedding   :  [ 0.81526718  0.81498471  0.81623277]
-Extra trees: [ 0.84219269  0.82270607  0.82225657]
+random forest:  0.82
+Logistic regression:  0.84
+Logistic regression without wordembedding:  0.82
+SVM without wordembedding:  0.82
+SVM with wordembedding   :  0.82
+Extra trees: 0.83
 
 recall:
-random forest:  [ 0.95131086  0.98874296  0.99624765]
-Logistic regression:  [ 0.91573034  0.94559099  0.94746717]
-Logistic regression without wordembedding:  [ 0.96254682  0.99812383  0.99812383]
-SVM without wordembedding:  [ 1.  1.  1.]
-SVM with wordembedding:  [ 1.  1.  1.]
-Extra trees: [ 0.94382022  0.99061914  0.99624765]
+random forest:  0.98
+Logistic regression:  0.93
+Logistic regression without wordembedding:  0.98
+SVM without wordembedding:  1
+SVM with wordembedding:  1
+Extra trees: 0.96
 
-Lowest Target
+Lowest Target F1 score (average of 3-fold CV)
 -------------------------------------------------------------
 OWN DICT + WEIGHING
 svm
-	 [ 0.54964539  0.65863454  0.67282322]
+	 0.62
 logistic regression
-	 [ 0.56742557  0.66755319  0.68229167]
+	 0.62
 GaussianNB
-	 [ 0.55062167  0.66042781  0.67282322]
+	 0.63
 extra trees
-	 [ 0.64339909  0.67346939  0.69912609]
+	 0.66
 random forest
-	 [ 0.65165165  0.68020305  0.69738481]
+	 0.67
 
 OWN DICT NO WEIGHING
 svm
-	 [ 0.55319149  0.66042781  0.67457181]
+	 0.6
 logistic regression
-	 [ 0.55062167  0.66042781  0.67282322]
+	 0.6
 GaussianNB
-	 [ 0.55319149  0.66042781  0.67457181]
+	 0.6
 extra trees
-	 [ 0.62616822  0.67435897  0.69382716]
+	 0.64
 random forest
-	 [ 0.63255814  0.67692308  0.69693252]
-
-DICT NO WEIGHING
-svm
-	 [ 0.55062167  0.65863454  0.67282322]
-logistic regression
-	 [ 0.5728988   0.66753927  0.69319641]
-GaussianNB
-	 [ 0.55062167  0.65863454  0.67282322]
-extra trees
-	 [ 0.59197324  0.6710013   0.69796954]
-random forest
-	 [ 0.60841424  0.67866324  0.69949495]
+	 0.66
 
 DICT WEIGHING
 svm
-	 [ 0.56140351  0.66047745  0.67889908]
+	 0.62
 logistic regression
-	 [ 0.62616822  0.67672956  0.6931677 ]
+	 0.66
+GaussianNB
+	 0.63
+extra trees
+	 0.63
+random forest
+	 0.63
+adaboost
+     0.62
+
+DICT NO WEIGHING
+svm
+	 0.62
+logistic regression
+	 0.62
+GaussianNB
+	 0.62
+extra trees
+	 0.62
+random forest
+	 0.63
+
+
+NO WORDEMBEDDINGS (f1)
+svm
+	 0.52
+logistic regression without wordembedding
+	 0.64
+GaussianNB without wordembedding
+	 0.6
+extra trees without wordembedding
+	 0.63
+random forest without wordembedding
+	 0.63
+adaboost
+     0.62
+
+
+adaboost
+	 [ 0.63369397  0.67503137  0.67481663]
+logistic regression
+	 [ 0.59432387  0.66839378  0.69961977]
 GaussianNB
 	 [ 0.55062167  0.65863454  0.67282322]
 extra trees
-	 [ 0.59504132  0.66753247  0.69377382]
+	 [ 0.591133    0.67783505  0.70332481]
 random forest
-	 [ 0.60096931  0.67354839  0.69346734]
+	 [ 0.61341853  0.67605634  0.70113493]
+svm
+	 [ 0.55062167  0.65863454  0.67282322]
+
+
+SUMMARY 23/11
+No difference in accuracy/f1 score when you add wordembeddings, except for svm, logistic regression
+however, the precision gets a bit better and the recall a bit worse
+When we train our own wordembeddings, weighing the vectors with the IDF seems to help a bit,
+but with the existing wordembeddings, it does not seem to add anything.
+our own wordembeddings + weighing seems to work equally good as the existing wordembeddings (either with or without weighing)
+
+Binarizing
+When we binarize the overall scores by >3 and <3 and dividing 3 randomly, there are almost no negative ones so the predictions get really good,
+but this does not say a lot
+When we binarize the lowest scores, there are more negative ones, but the accuracy is only around 60%
+When we binarize the average scores, there are almost no negative ones again...
+
+Autocorrect
+autocorrect only seems to help for certain classifiers, and only helps around 1%, but classifiers do not get worse.
+
+We deleted rows with grade 0, and we do not use the other features.
