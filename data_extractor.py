@@ -11,6 +11,7 @@ from sklearn import preprocessing
 import autocorrect
 import wordset
 import gensim
+import json
 
 def all_scores(df:pd.DataFrame) -> list:
     num_rows = df.shape[0]
@@ -28,19 +29,22 @@ def get_lowest_target(df:pd.DataFrame) -> list:
     scores = all_scores(df)
     return [min(s) for s in scores]
 
+def split_text(comment:str) -> list:
+    return [c.lower() for c in wordset.tokenize(comment)]
+
 def data_extract_comments(config=util.DEFAULT_CONFIG):
     df = pd.read_csv(util.FEEDBACK_DATA)[util.TEXT_HEADERS + util.SCORE_TYPES]
+    df = df.dropna(subset=util.TEXT_HEADERS, how='all')
     df = df.fillna('')
     df = df.drop(df[df['Overall'] == 0].index)
-    y = binarize_scores(get_lowest_target(df))
-    df = df.drop(util.SCORE_TYPES, axis=1)
     df['supercomment'] = ""
-    for header in df:
+    for header in util.TEXT_HEADERS:
         df['supercomment'] += df[header]
     df = df.drop(util.TEXT_HEADERS, axis=1)
-    df['supercomment'] = [[c.lower() for c in wordset.tokenize(comment)] for comment in df['supercomment']]
-    df['supercomment'] = auto_correct(df['supercomment'])
-    # print(df)
+    df['supercomment'] = [split_text(comment) for comment in df['supercomment']]
+    print(df['supercomment'])
+    y = binarize_scores(get_lowest_target(df))
+    df = df.drop(util.SCORE_TYPES, axis=1)
     return df, y
 
 def data_extract_tfidf_comments(config=util.DEFAULT_CONFIG):
@@ -199,3 +203,15 @@ def create_word_embeddings(x:list) -> dict:
         w2v_dict = dict(zip(model.wv.index2word, model.wv.syn0))
         pickle.dump(w2v_dict, open(util.OWN_WORDVEC_PICKLE_FILE, 'wb'))
         return w2v_dict
+
+def read_reviews():
+    reviews = []
+    scores = []
+    df = pd.DataFrame(columns=['supercomment', 'score'])
+    with open(util.AMAZON_DATA,'r') as file:
+        jsons = [next(file) for i in range(1000)]
+        for entry in jsons:
+            d = json.loads(entry,encoding='utf-8')
+            reviews.append(split_text(d['reviewText']))
+            scores.append(binarize_scores([d['overall']])[0])
+    return {'supercomment':reviews}, scores
