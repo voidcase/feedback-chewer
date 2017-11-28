@@ -13,24 +13,10 @@ import wordset
 # import gensim
 import json
 
-def all_scores(df:pd.DataFrame) -> list:
-    num_rows = df.shape[0]
-    return [
-        [df.iloc[i][t] for t in util.SCORE_TYPES]
-        for i in range(num_rows)
-    ]
 
-def get_avg_target(df:pd.DataFrame) -> list:
-    scores = all_scores(df)
-    averages = [sum(s)/len(s) for s in scores]
-    return averages
 
-def get_lowest_target(df:pd.DataFrame) -> list:
-    scores = all_scores(df)
-    return [min(s) for s in scores]
 
-def split_text(comment:str) -> list:
-    return [c.lower() for c in wordset.tokenize(comment)]
+
 
 def data_extract_comments(config=util.DEFAULT_CONFIG):
     df = pd.read_csv(util.FEEDBACK_DATA)[util.TEXT_HEADERS + util.SCORE_TYPES]
@@ -190,13 +176,7 @@ def normalize_vector(vector:list) -> list:
     else:
         return vector / norm
 
-def binarize_scores(y:list) -> list:
-    return [
-        1 if score > 3
-            else 0 # if score < 3
-            # else random.randint(0,1) # score == 3
-        for score in y
-    ]
+
 
 def create_word_embeddings(x:list) -> dict:
     try:
@@ -209,15 +189,3 @@ def create_word_embeddings(x:list) -> dict:
         w2v_dict = dict(zip(model.wv.index2word, model.wv.syn0))
         pickle.dump(w2v_dict, open(util.OWN_WORDVEC_PICKLE_FILE, 'wb'))
         return w2v_dict
-
-def read_reviews():
-    reviews = []
-    scores = []
-    df = pd.DataFrame(columns=['supercomment', 'score'])
-    with open(util.AMAZON_DATA,'r') as file:
-        jsons = [next(file) for i in range(1000)]
-        for entry in jsons:
-            d = json.loads(entry,encoding='utf-8')
-            reviews.append(split_text(d['reviewText']))
-            scores.append(binarize_scores([d['overall']])[0])
-    return {'supercomment':reviews}, scores

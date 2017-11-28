@@ -13,6 +13,9 @@ from sklearn.metrics import confusion_matrix, make_scorer
 import seaborn as sn
 import pandas as pd
 import matplotlib.pyplot as plt
+import maxiv_data
+import amazon_data
+import transforms as tf
 
 def tp(y_true, y_pred): return confusion_matrix(y_true, y_pred)[1, 1]
 def tn(y_true, y_pred): return confusion_matrix(y_true, y_pred)[0, 0]
@@ -39,7 +42,8 @@ def make_models(w2v=False, own=False) -> dict:
     w2v_dict = {}
     if w2v:
         if own:
-            w2v_dict = create_word_embeddings(x['supercomment'])
+            pass
+            # w2v_dict = create_word_embeddings(x['supercomment'])
         else:
             w2v_dict = parse_word_vectors(util.WORDVEC_DATA)
 
@@ -58,12 +62,24 @@ def make_models(w2v=False, own=False) -> dict:
         for label, clf in classifiers
     }
 
-def cross_val() -> dict:
-    x, y = data_extract_comments()
-    tfidf_matrix = data_extract_tfidf_comments()
+def apply_transforms(df:pd.DataFrame) -> pd.DataFrame:
+    for transform in [
+        tf.token_transform,
+        tf.binarize_transform,
+    ]:
+        df = transform(df)
+    return df
 
+def cross_val() -> dict:
+    df = maxiv_data.get_set()
+    df = apply_transforms(df)
+    x = df['tokens']
+    y = df['score']
+    print('xtype:', type(x))
+    print('ytype:', type(y))
+    #tfidf_matrix = data_extract_tfidf_comments()
     models_with_word_embedding = make_models(w2v=True, own=False)
-    models_without_word_embedding = make_models(w2v=False, own=False)
+    #models_without_word_embedding = make_models(w2v=False, own=False)
 
     cv_precisions_with = {
         label: cross_val_score(model, x, y, scoring='accuracy')
@@ -72,10 +88,10 @@ def cross_val() -> dict:
 
 
 
-    cv_precisions_without = {
-        label: cross_val_score(model, tfidf_matrix, y, scoring='accuracy')
-        for label, model in models_without_word_embedding.items()
-    }
+    #cv_precisions_without = {
+    #    label: cross_val_score(model, tfidf_matrix, y, scoring='accuracy')
+    #    for label, model in models_without_word_embedding.items()
+    #}
 
-    cv_precisions = {**cv_precisions_with, **cv_precisions_without}
-    return cv_precisions
+    #cv_precisions = {**cv_precisions_with, **cv_precisions_without}
+    return cv_precisions_with
