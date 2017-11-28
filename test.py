@@ -56,7 +56,6 @@ def test_confusion_matrix():
 
 def test_print_example_predictions():
     x, y = data_extractor.data_extract_comments()
-
     #non_empties = [comment for comment in x['supercomment'] if comment != []]
     models = sp.make_models(w2v=True)
     x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.05)
@@ -66,6 +65,11 @@ def test_print_example_predictions():
     for label, model in models.items():
         print(label, ':', model.predict(x_test.head(3)))
 
+def test_closest_words():
+    word_vectors = data_extractor.parse_word_vectors(util.WORDVEC_DATA)
+    data_extractor.compute_closest_words(word_vectors, 'cinnamon', 10)
+
+
 if __name__ == '__main__':
-    test_cross_validation()
+    test_wordvec_parser()
     print('done!')

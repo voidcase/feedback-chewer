@@ -56,7 +56,7 @@ def make_models(w2v=False, own=False) -> dict:
     ]
 
     return {
-        label + ' with w2v'*w2v : Pipeline(
+        label + ' with w2v' * w2v : Pipeline(
             [('embedding vectorizer', EmbeddingVectorizer(w2v_dict))] * w2v + [(label, clf)]
         )
         for label, clf in classifiers

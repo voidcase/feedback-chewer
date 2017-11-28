@@ -10,17 +10,31 @@ from sklearn.feature_selection import VarianceThreshold
 from sklearn import preprocessing
 import autocorrect
 import wordset
-# import gensim
+import gensim
+from scipy.spatial.distance import cdist
 import json
 
+def all_scores(df:pd.DataFrame) -> list:
+    num_rows = df.shape[0]
+    return [
+        [df.iloc[i][t] for t in util.SCORE_TYPES]
+        for i in range(num_rows)
+    ]
 
+def get_avg_target(df:pd.DataFrame) -> list:
+    scores = all_scores(df)
+    averages = [sum(s)/len(s) for s in scores]
+    return averages
 
+def get_lowest_target(df:pd.DataFrame) -> list:
+    scores = all_scores(df)
+    return [min(s) for s in scores]
 
 
 
 def data_extract_comments(config=util.DEFAULT_CONFIG):
     df = pd.read_csv(util.FEEDBACK_DATA)[util.TEXT_HEADERS + util.SCORE_TYPES]
-    df = df.dropna(subset=util.TEXT_HEADERS, how='all')
+    #df = df.dropna(subset=util.TEXT_HEADERS, how='all')
     df = df.fillna('')
     df = df.drop(df[df['Overall'] == 0].index)
     df['supercomment'] = ""
@@ -29,7 +43,7 @@ def data_extract_comments(config=util.DEFAULT_CONFIG):
     df = df.drop(util.TEXT_HEADERS, axis=1)
     df['supercomment'] = [split_text(comment) for comment in df['supercomment']]
     # print(df['supercomment'])
-    y = binarize_scores(get_lowest_target(df))
+    y = binarize_scores(get_avg_target(df))
     df = df.drop(util.SCORE_TYPES, axis=1)
     return df, y
 
@@ -158,14 +172,13 @@ def parse_word_vectors(filename:str) -> dict:
     except FileNotFoundError:
         with open(filename, 'r', encoding='utf-8') as datafile:
             print('no pickled word vectors found, filtering original corpus, this might take a while...')
-            lines = [l for l in datafile][:100000]
+            lines = [l for l in datafile][:1000000]
             print('dbg: lines:', len(lines))
             vectors = {
                 line.split()[0]:
                     np.array(normalize_vector([float(v) for v in line.split()[1:]]))
                     for line in lines
             }
-            print("lotta is boos")
             pickle.dump(vectors, open(util.WORDVEC_PICKLE_FILE, 'wb'))
             return vectors
 
@@ -176,7 +189,25 @@ def normalize_vector(vector:list) -> list:
     else:
         return vector / norm
 
+def compute_closest_words(vectors:dict, word, top:int) -> list:
+    items = vectors.items()
+    keys = [vect[0] for vect in items]
+    index = keys.index(word)
+    vectors = [vect[1] for vect in items]
+    a = vectors[index]
+    distances = [np.linalg.norm(a-b) for b in vectors]
+    sorted_distances = sorted([(x,y) for x,y in enumerate(distances)], key=lambda x: x[1])
+    closest = [keys[i] for i,j in sorted_distances[:top]]
+    print(closest)
 
+
+def binarize_scores(y:list) -> list:
+    return [
+        1 if score > 3
+            else 0 # if score < 3
+            # else random.randint(0,1) # score == 3
+        for score in y
+    ]
 
 def create_word_embeddings(x:list) -> dict:
     try:
