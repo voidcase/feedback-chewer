@@ -52,13 +52,13 @@ def make_models(w2v=False, own=False) -> dict:
     ]
 
     return {
-        label + ' with w2v'*w2v : Pipeline(
+        label + ' with w2v' * w2v : Pipeline(
             [('embedding vectorizer', EmbeddingVectorizer(w2v_dict))] * w2v + [(label, clf)]
         )
         for label, clf in classifiers
     }
 
-def cross_validate() -> dict:
+def cross_val() -> dict:
     x, y = data_extract_comments()
     tfidf_matrix = data_extract_tfidf_comments()
 
