@@ -7,6 +7,7 @@ from sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import GaussianNB
 from sklearn import svm
+from sklearn.metrics import accuracy_score
 from embedding_vectorizer import EmbeddingVectorizer
 from data_extractor import data_extract_comments, parse_word_vectors, data_extract_tfidf_comments, create_word_embeddings
 from sklearn.metrics import confusion_matrix, make_scorer
@@ -63,11 +64,12 @@ def make_models(w2v=False, own=False) -> dict:
     }
 
 def apply_transforms(df:pd.DataFrame) -> pd.DataFrame:
-    for transform in [
-        tf.token_transform,
-        tf.binarize_transform,
-        tf.auto_correct_transform
+    for label, transform in [
+        ('tokenizing',tf.token_transform),
+        ('binarizing',tf.binarize_transform),
+        ('autocorrecting',tf.auto_correct_transform),
     ]:
+        print(label,'...')
         df = transform(df)
     return df
 
@@ -96,3 +98,25 @@ def cross_val() -> dict:
 
     #cv_precisions = {**cv_precisions_with, **cv_precisions_without}
     return cv_precisions_with
+
+def cross_dataset_eval():
+    train = amazon_data.get_set()
+    test = maxiv_data.get_set()
+    print('loaded datasets')
+    train = apply_transforms(train)
+    test = apply_transforms(test)
+    print('applied transforms')
+    train_x = train['tokens']
+    train_y = train['score']
+    test_x = test['tokens']
+    test_y = test['score']
+    models = make_models(w2v=True, own=False)
+    scores = {}
+    for label, model in models.items():
+        print('training',label,'...')
+        model.fit(train_x,train_y)
+        pred_y = model.predict(test_x)
+        scores[label] = accuracy_score(test_y, pred_y)
+    return scores
+
+

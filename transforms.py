@@ -8,11 +8,11 @@ def _split_text(comment:str) -> list:
 def token_transform(df:pd.DataFrame) -> pd.DataFrame:
     """
     :param df: req text
-    :return: +tokens -text
+    :return: +tokens
     """
     ret = df.copy() #type: pd.DataFrame
     ret['tokens'] = df.apply(lambda row: _split_text(row['text']),axis=1)
-    ret = ret.drop('text',axis=1)
+    #ret = ret.drop('text',axis=1)
     return ret
 
 def binarize_transform(df:pd.DataFrame) -> pd.DataFrame:

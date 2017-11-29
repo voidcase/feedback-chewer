@@ -168,3 +168,12 @@ Autocorrect
 autocorrect only seems to help for certain classifiers, and only helps around 1%, but classifiers do not get worse.
 
 We deleted rows with grade 0, and we do not use the other features.
+
+TRAINING WITH AMAZON AND TESTING ON MAXIV:
+    svm with w2v : 0.338129496403
+    logistic regression with w2v : 0.471223021583
+    extra trees with w2v : 0.345323741007
+    GaussianNB with w2v : 0.364508393285
+    random forest with w2v : 0.368105515588
+
+    not great...
