@@ -66,12 +66,13 @@ def apply_transforms(df:pd.DataFrame) -> pd.DataFrame:
     for transform in [
         tf.token_transform,
         tf.binarize_transform,
+        tf.auto_correct_transform
     ]:
         df = transform(df)
     return df
 
 def cross_val() -> dict:
-    df = maxiv_data.get_set()
+    df = amazon_data.get_set()
     df = apply_transforms(df)
     x = df['tokens']
     y = df['score']
