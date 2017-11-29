@@ -164,6 +164,7 @@ def get_txt_lineset(filename: str) -> set:
         return set(x.strip() for x in datafile)
 
 
+
 def parse_word_vectors(filename:str) -> dict:
     try:
         cache = pickle.load(open(util.WORDVEC_PICKLE_FILE, 'rb'))
@@ -172,7 +173,8 @@ def parse_word_vectors(filename:str) -> dict:
     except FileNotFoundError:
         with open(filename, 'r', encoding='utf-8') as datafile:
             print('no pickled word vectors found, filtering original corpus, this might take a while...')
-            lines = [l for l in datafile][:1000000]
+            #lines = [l for l in datafile][:100000]
+            lines = [l for l in datafile if l.split()[0] in all_words]
             print('dbg: lines:', len(lines))
             vectors = {
                 line.split()[0]:

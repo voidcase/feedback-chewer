@@ -71,5 +71,5 @@ def test_closest_words():
 
 
 if __name__ == '__main__':
-    test_wordvec_parser()
+    test_cross_validation()
     print('done!')
