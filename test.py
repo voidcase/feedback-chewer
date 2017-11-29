@@ -49,6 +49,12 @@ def test_cross_validation():
     minscores = {label: min(scores) for label, scores in cv_precisions.items()}
     print('highest lowest:', max(minscores,key=minscores.get))
 
+def test_across_datasets():
+    scores = sp.cross_dataset_eval()
+    print('training on Amazon, testing on Max IV:')
+    for label, score in scores.items():
+        print(label,':',score)
+
 def test_confusion_matrix():
     x,y = data_extractor.data_extract_comments()
     tfidf = data_extractor.data_extract_tfidf_comments()
@@ -71,5 +77,5 @@ def test_closest_words():
 
 
 if __name__ == '__main__':
-    test_cross_validation()
+    test_across_datasets()
     print('done!')

@@ -169,13 +169,11 @@ autocorrect only seems to help for certain classifiers, and only helps around 1%
 
 We deleted rows with grade 0, and we do not use the other features.
 
-logistic regression with w2v
-	 [ 0.71942446  0.71582734  0.71223022]
-GaussianNB with w2v
-	 [ 0.6618705   0.61870504  0.66906475]
-extra trees with w2v
-	 [ 0.69784173  0.68705036  0.68705036]
-random forest with w2v
-	 [ 0.70863309  0.73021583  0.72302158]
-svm with w2v
-	 [ 0.6618705  0.6618705  0.6618705]
+TRAINING WITH AMAZON AND TESTING ON MAXIV:
+    svm with w2v : 0.338129496403
+    logistic regression with w2v : 0.471223021583
+    extra trees with w2v : 0.345323741007
+    GaussianNB with w2v : 0.364508393285
+    random forest with w2v : 0.368105515588
+
+    not great...
