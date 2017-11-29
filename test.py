@@ -67,9 +67,9 @@ def test_print_example_predictions():
 
 def test_closest_words():
     word_vectors = data_extractor.parse_word_vectors(util.WORDVEC_DATA)
-    data_extractor.compute_closest_words(word_vectors, 'cinnamon', 10)
+    data_extractor.compute_closest_words(word_vectors, 'no', 10)
 
 
 if __name__ == '__main__':
-    test_wordvec_parser()
+    test_cross_validation()
     print('done!')

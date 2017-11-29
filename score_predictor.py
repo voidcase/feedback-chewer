@@ -86,8 +86,6 @@ def cross_val() -> dict:
         for label, model in models_with_word_embedding.items()
     }
 
-
-
     #cv_precisions_without = {
     #    label: cross_val_score(model, tfidf_matrix, y, scoring='accuracy')
     #    for label, model in models_without_word_embedding.items()

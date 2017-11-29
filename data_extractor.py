@@ -30,8 +30,6 @@ def get_lowest_target(df:pd.DataFrame) -> list:
     scores = all_scores(df)
     return [min(s) for s in scores]
 
-
-
 def data_extract_comments(config=util.DEFAULT_CONFIG):
     df = pd.read_csv(util.FEEDBACK_DATA)[util.TEXT_HEADERS + util.SCORE_TYPES]
     #df = df.dropna(subset=util.TEXT_HEADERS, how='all')

@@ -10,7 +10,7 @@ def token_transform(df:pd.DataFrame):
     header diff: +tokens -text
     :return:
     """
-    ret = df.copy()
+    ret = df.copy() #type: pd.DataFrame
     ret['tokens'] = df.apply(lambda row: _split_text(row['text']),axis=1)
     ret = ret.drop('text',axis=1)
     return ret
@@ -20,6 +20,6 @@ def binarize_transform(df:pd.DataFrame) -> pd.DataFrame:
     :param df: req score
     :return: ~score
     """
-    ret = df.copy()
+    ret = df.copy() #type: pd.DataFrame
     ret['score'] = df.apply(lambda row: 1 if row['score'] > 3 else 0, axis=1)
     return ret
