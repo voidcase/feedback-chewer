@@ -75,7 +75,9 @@ def test_closest_words():
     word_vectors = data_extractor.parse_word_vectors(util.WORDVEC_DATA)
     data_extractor.compute_closest_words(word_vectors, 'no', 10)
 
+def test_plot_crossval():
+    sp.plot_cross_val('accuracy')
 
 if __name__ == '__main__':
-    test_cross_validation()
+    test_plot_crossval()
     print('done!')
