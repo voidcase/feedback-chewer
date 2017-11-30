@@ -63,6 +63,11 @@ def make_models(w2v=False, own=False) -> dict:
         for label, clf in classifiers
     }
 
+def get_xy(model:pd.DataFrame) -> (pd.DataFrame, pd.Series):
+    x = model.drop([h for h in model if h in ['text','tokens','score']], axis=1)
+    y = model['score']
+    return x,y
+
 def apply_transforms(df:pd.DataFrame) -> pd.DataFrame:
     for label, transform in [
         ('tokenizing',tf.token_transform),
@@ -79,8 +84,7 @@ def cross_val() -> dict:
     df = amazon_data.get_set()
     df = apply_transforms(df)
     print(df)
-    x = df.drop('score',axis=1)
-    y = df['score']
+    x, y = get_xy(df)
 
     # models_with_word_embedding = make_models(w2v=True, own=False)
     models_without_word_embedding = make_models(w2v=False, own=False)
@@ -110,10 +114,8 @@ def cross_dataset_eval():
     train = apply_transforms(train)
     test = apply_transforms(test)
     print('applied transforms')
-    train_x = train['tokens']
-    train_y = train['score']
-    test_x = test['tokens']
-    test_y = test['score']
+    train_x, train_y = get_xy(train)
+    test_x, test_y = get_xy(test)
     models = make_models(w2v=True, own=False)
     scores = {}
     for label, model in models.items():
