@@ -63,22 +63,22 @@ def make_models(w2v=False, own=False) -> dict:
         for label, clf in classifiers
     }
 
-def apply_transforms(df:pd.DataFrame) -> pd.DataFrame:
+def apply_transforms(df:pd.DataFrame,transforms:list) -> pd.DataFrame:
     for label, transform in [
         ('tokenizing',tf.token_transform),
         ('binarizing',tf.binarize_transform),
         ('tfidf', tf.tfidf_transform),
-        # ('autocorrecting',tf.auto_correct_transform),
+        ('autocorrecting',tf.auto_correct_transform),
         ('embedding',tf.embedding_transform)
     ]:
-        print(label,'...')
-        df = transform(df)
+        if label in transforms:
+            print(label,'...')
+            df = transform(df)
     return df
 
 def cross_val() -> dict:
     df = amazon_data.get_set()
-    df = apply_transforms(df)
-    print(df)
+    df = apply_transforms(df,['tokenizing','binarizing','tfidf','embedding'])
     x = df.drop('score',axis=1)
     y = df['score']
 
@@ -102,6 +102,33 @@ def cross_val() -> dict:
 
     #cv_precisions = {**cv_precisions_with, **cv_precisions_without}
     return cv_precisions_without
+
+TRANSFORMS = [
+        ('tokenizing',tf.token_transform),
+        ('binarizing',tf.binarize_transform),
+        ('tfidf', tf.tfidf_transform),
+        ('autocorrecting',tf.auto_correct_transform),
+        ('embedding',tf.embedding_transform)
+    ]
+def plot_cross_val(metric):
+    df = maxiv_data.get_set()
+    for label, transforms in [('tfidf', ['tfidf']),
+                              ('embedding',['embedding']),
+                              ('tfidf_embedding',['tfidf','embedding'])]:
+
+        df = apply_transforms(df,['tokenizing','binarizing'] + transforms)
+        y = df['score']
+    for header in ['score', 'text', 'tokens']:
+        if header in df:
+            df = df.drop(header,axis=1)
+    x = df
+    models_without_word_embedding = make_models(w2v=False, own=False)
+    cv_precisions_without = {
+        label: np.mean(cross_val_score(model, x, y, scoring=metric))
+        for label, model in models_without_word_embedding.items()
+        }
+    print(cv_precisions_without)
+
 
 def cross_dataset_eval():
     train = amazon_data.get_set()
