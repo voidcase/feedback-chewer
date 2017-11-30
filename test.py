@@ -77,5 +77,5 @@ def test_closest_words():
 
 
 if __name__ == '__main__':
-    test_across_datasets()
+    test_cross_validation()
     print('done!')

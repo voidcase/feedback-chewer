@@ -4,7 +4,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.model_selection import cross_val_score, cross_validate
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier
-from sklearn.feature_extraction.text import TfidfVectorizer
+
 from sklearn.naive_bayes import GaussianNB
 from sklearn import svm
 from sklearn.metrics import accuracy_score
@@ -67,7 +67,9 @@ def apply_transforms(df:pd.DataFrame) -> pd.DataFrame:
     for label, transform in [
         ('tokenizing',tf.token_transform),
         ('binarizing',tf.binarize_transform),
-        ('autocorrecting',tf.auto_correct_transform),
+        ('tfidf', tf.tfidf_transform),
+        # ('autocorrecting',tf.auto_correct_transform),
+        ('embedding',tf.embedding_transform)
     ]:
         print(label,'...')
         df = transform(df)
@@ -76,17 +78,21 @@ def apply_transforms(df:pd.DataFrame) -> pd.DataFrame:
 def cross_val() -> dict:
     df = amazon_data.get_set()
     df = apply_transforms(df)
-    x = df['tokens']
+    print(df)
+    x = df.drop('score',axis=1)
     y = df['score']
-    print('xtype:', type(x))
-    print('ytype:', type(y))
-    #tfidf_matrix = data_extract_tfidf_comments()
-    models_with_word_embedding = make_models(w2v=True, own=False)
-    #models_without_word_embedding = make_models(w2v=False, own=False)
 
-    cv_precisions_with = {
+    # models_with_word_embedding = make_models(w2v=True, own=False)
+    models_without_word_embedding = make_models(w2v=False, own=False)
+
+    # cv_precisions_with = {
+    #     label: cross_val_score(model, x, y, scoring='accuracy')
+    #     for label, model in models_with_word_embedding.items()
+    # }
+
+    cv_precisions_without = {
         label: cross_val_score(model, x, y, scoring='accuracy')
-        for label, model in models_with_word_embedding.items()
+        for label, model in models_without_word_embedding.items()
     }
 
     #cv_precisions_without = {
@@ -95,7 +101,7 @@ def cross_val() -> dict:
     #}
 
     #cv_precisions = {**cv_precisions_with, **cv_precisions_without}
-    return cv_precisions_with
+    return cv_precisions_without
 
 def cross_dataset_eval():
     train = amazon_data.get_set()
