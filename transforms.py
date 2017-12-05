@@ -4,6 +4,8 @@ import data_extractor
 import wordset
 import util
 import autocorrect
+import pickle
+import sys
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 def _split_text(comment:str) -> list:
@@ -50,11 +52,20 @@ def binarize_transform(df:pd.DataFrame) -> pd.DataFrame:
     ret['score'] = df.apply(lambda row: 1 if row['score'] > 3 else 0, axis=1)
     return ret
 
+def _spell_and_cache(word:str, cache:dict) -> str:
+    if word not in cache:
+        cache[word] = autocorrect.spell(word)
+    return cache[word]
+
 def auto_correct_transform(df:pd.DataFrame) -> pd.DataFrame:
     """
     :param df: req tokens
     :return: ~tokens
     """
+    cache = {}
+    if sys.path.exists(util.AUTOCORRECT_PICKLE_FILE):
+        cache = pickle.load(open(util.AUTOCORRECT_PICKLE_FILE, 'rb'))
     ret = df.copy() #type: pd.DataFrame
-    ret['tokens'] = ret.apply(lambda row: [autocorrect.spell(t) for t in row['tokens']],axis=1)
+    ret['tokens'] = ret.apply(lambda row: [_spell_and_cache(t,cache) for t in row['tokens']],axis=1)
+    pickle.dump(cache,open(util.AUTOCORRECT_PICKLE_FILE, 'wb'))
     return ret
