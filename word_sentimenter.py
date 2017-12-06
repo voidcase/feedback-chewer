@@ -73,3 +73,6 @@ def positivity(comment: Comment):
     posi, nega = find_posi_nega_tokens(comment)
     return len(posi) - len(nega)
 
+def negativity(comment: Comment):
+    posi, nega = find_posi_nega_tokens(comment)
+    return len(nega)

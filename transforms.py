@@ -6,6 +6,8 @@ import util
 import autocorrect
 import pickle
 import sys
+from word_sentimenter import find_posi_nega_tokens
+from comment import Comment
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 def _split_text(comment:str) -> list:
@@ -69,3 +71,11 @@ def auto_correct_transform(df:pd.DataFrame) -> pd.DataFrame:
     ret['tokens'] = ret.apply(lambda row: [_spell_and_cache(t,cache) for t in row['tokens']],axis=1)
     pickle.dump(cache,open(util.AUTOCORRECT_PICKLE_FILE, 'wb'))
     return ret
+
+def posinega_count_transform(df:pd.DataFrame) -> pd.DataFrame:
+    """
+    :param df: req text
+    :return: +posi_count, +nega_count
+    """
+    pairs = df.apply(lambda row: find_posi_nega_tokens(Comment(df['text'])), axis=1)
+    # NOT DONE

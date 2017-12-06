@@ -10,7 +10,7 @@ def unify_avg(df:pd.DataFrame) -> pd.DataFrame:
 
 
 def unify_lowest(df:pd.DataFrame) -> pd.DataFrame:
-    df['score'] = df.apply(lambda row: min([row[h] for h in util.SCORE_TYPES]), axis=1)
+    df['score'] = df.apply(lambda row: min([row[h] for h in util.SCORE_TYPES if h != 0]), axis=1)
     df = df.drop(util.SCORE_TYPES, axis=1)
     return df
 

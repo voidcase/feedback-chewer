@@ -1,5 +1,21 @@
 console.log('JS loaded!');
 $(document).ready(function() {
+    $.ajax({
+        url: '/keywords',
+        dataType: 'json',
+        success: function(response) {
+            var listItems = Object.keys(response).map(word => $('<li></li>')
+                .addClass('list-group-item')
+                .text(word + ' ')
+                .append($('<span></span>')
+                    .addClass('badge')
+                    .addClass('badge-info')
+                    .text(response[word])
+                )
+            );
+            $('#keyword-list').append(listItems)
+        }
+    });
 	console.log('in ready');
 	$('#annotate-button').click(function(e) {
 		const commentText = $('#comment-field').val();
