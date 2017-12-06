@@ -62,13 +62,14 @@ def test_confusion_matrix():
     sp.cm(ensemble.ExtraTreesClassifier(n_estimators=150), tfidf, y)
 
 def test_print_example_predictions():
-    data = maxiv_data.get_set()
+    data = sp.apply_transforms(maxiv_data.get_set())
     #non_empties = [comment for comment in x['supercomment'] if comment != []]
-    models = sp.make_models(w2v=True)
+    x, y = sp.get_xy(data)
+    models = sp.make_models(w2v=False,own=False)
     x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.05)
     for label, model in models.items():
         model.fit(x_train, y_train)
-    print(x_test.head(3))
+    print(data['text'][3:])
     for label, model in models.items():
         print(label, ':', model.predict(x_test.head(3)))
 

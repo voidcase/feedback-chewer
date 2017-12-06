@@ -17,7 +17,7 @@ def unify_lowest(df:pd.DataFrame) -> pd.DataFrame:
 def unify_text(df:pd.DataFrame) -> pd.DataFrame:
     df['text'] = ""
     for header in util.TEXT_HEADERS:
-        df['text'] += df[header]
+        df['text'] += " " + df[header]
     df = df.drop(util.TEXT_HEADERS, axis=1)
     return df
 
