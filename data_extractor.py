@@ -91,19 +91,6 @@ def auto_correct(comments: list) -> list:
         pickle.dump(corrected, open(util.AUTOCORRECT_PICKLE_FILE, 'wb'))
         return corrected
 
-def sep_comments(df: pd.DataFrame):
-    for header, suffix in util.TEXT_HEADERS_AND_SUFFIXES:
-        if header in df:
-            tfidf_frame = tfidf_sep_comments(df[header], suffix)
-            df = pd.concat([df.drop([header], axis=1), tfidf_frame], axis=1)
-    return df
-
-
-def get_x_and_y(config=util.DEFAULT_CONFIG) -> (pd.DataFrame, list):
-    y_col = get_all_data()['Overall']
-    x = data_extract(config)
-    return x, y_col
-
 
 def supercomment(df: pd.DataFrame):
     df['supercomment'] = ""
@@ -199,15 +186,6 @@ def compute_closest_words(vectors:dict, word, top:int) -> list:
     sorted_distances = sorted([(x,y) for x,y in enumerate(distances)], key=lambda x: x[1])
     closest = [keys[i] for i,j in sorted_distances[:top]]
     print(closest)
-
-
-def binarize_scores(y:list) -> list:
-    return [
-        1 if score > 3
-            else 0 # if score < 3
-            # else random.randint(0,1) # score == 3
-        for score in y
-    ]
 
 def create_word_embeddings(x:list) -> dict:
     try:

@@ -20,13 +20,14 @@ def token_transform(df:pd.DataFrame) -> pd.DataFrame:
     """
     ret = df.copy() #type: pd.DataFrame
     ret['tokens'] = df.apply(lambda row: _split_text(row['text']),axis=1)
-    # ret = ret.drop('text',axis=1)
+    ret['drop'] = [len(item) != 0 for item in ret['tokens']]
+    ret = ret[ret['drop']].drop(['drop'], axis=1)
     return ret
 
 def tfidf_transform(df:pd.DataFrame) -> pd.DataFrame:
     ret = df.reset_index(drop=True).copy() #type:pd.DataFrame
     values = df['text'].values
-    vectorizer = TfidfVectorizer(stop_words='english', min_df=util.MIN_DF)
+    vectorizer = TfidfVectorizer(stop_words='english', min_df=util.MIN_DF, ngram_range=(1,3))
     tfidf_matrix = vectorizer.fit_transform(values).toarray()
     featurenames = np.asarray(['word_' + w for w in vectorizer.get_feature_names()])
     tfidf_frame = pd.DataFrame(tfidf_matrix,columns=featurenames)
@@ -51,7 +52,7 @@ def binarize_transform(df:pd.DataFrame) -> pd.DataFrame:
     :return: ~score
     """
     ret = df.copy() #type: pd.DataFrame
-    ret['score'] = df.apply(lambda row: 1 if row['score'] > 3 else 0, axis=1)
+    ret['score'] = df.apply(lambda row: 1 if row['score'] >= 3.5 else 0, axis=1)
     return ret
 
 def _spell_and_cache(word:str, cache:dict) -> str:

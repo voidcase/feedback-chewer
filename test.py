@@ -56,11 +56,6 @@ def test_across_datasets():
     for label, score in scores.items():
         print(label,':',score)
 
-def test_confusion_matrix():
-    x,y = data_extractor.data_extract_comments()
-    tfidf = data_extractor.data_extract_tfidf_comments()
-    sp.cm(ensemble.ExtraTreesClassifier(n_estimators=150), tfidf, y)
-
 def test_print_example_predictions():
     data = sp.apply_transforms(maxiv_data.get_set())
     #non_empties = [comment for comment in x['supercomment'] if comment != []]
@@ -79,5 +74,5 @@ def test_closest_words():
 
 
 if __name__ == '__main__':
-    test_cross_validation()
+    print(sp.get_coeffs())
     print('done!')
