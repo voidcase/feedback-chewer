@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, request
 from word_sentimenter import create_dict
 from comment import Comment
+from score_predictor import get_coeffs
 import wordset
 
 app = Flask(__name__)
@@ -17,11 +18,9 @@ def annotate():
 @app.route('/keywords')
 def keywords():
     # mockup
-    return jsonify({
-        'lunch room' : 20,
-        'chemistry lab' : -6,
-        'doggos' : 500
-    })
+    pairs = get_coeffs()
+    dicts = [{'word':word.replace('word_',''), 'score':round(score,3)} for score, word in pairs if type(word) == str]
+    return jsonify(dicts)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=7000)
+    app.run(debug=True, port=7001)

@@ -4,14 +4,15 @@ $(document).ready(function() {
         url: '/keywords',
         dataType: 'json',
         success: function(response) {
-            var listItems = Object.keys(response).map(word => $('<li></li>')
+            var listItems = response.map(item => $('<li></li>')
                 .addClass('list-group-item')
-                .text(word + ' ')
                 .append($('<span></span>')
                     .addClass('badge')
                     .addClass('badge-info')
-                    .text(response[word])
-                )
+                    .text(item.score)
+                    )
+                .append(' ')
+                .append($('<span></span>').text(item.word))
             );
             $('#keyword-list').append(listItems)
         }
