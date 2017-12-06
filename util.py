@@ -31,7 +31,7 @@ AUTOCORRECT_PICKLE_FILE = 'pickles/autocorrect.pickle'
 DROPTEST = ['Proposal'] + SCORE_TYPES + EXTERNAL_FACTOR_HEADERS + DATE_HEADERS
 TARGET = 'Overall'
 VARIANCE_THRESHOLD = 1
-MIN_DF= 1
+MIN_DF= 0.01
 DEFAULT_CONFIG = {
     'target': 'Overall',
     'variance_threshold': 0.001,
@@ -39,7 +39,8 @@ DEFAULT_CONFIG = {
 }
 NUMBER_DIMENSIONS = 256
 SCOREPAIRS =[(['Overall comments',  'Remarks'], ['Overall']),
-             (['Experiment comments', 'Infrastructure comment'],
+             (['Infrastructure comment'],['DUO']),
+             (['Experiment comments'],
               ['Scientific support', 'Technical support',
                                      'Beamline hardware',
                                      'Beamline software',

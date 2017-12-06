@@ -75,5 +75,5 @@ def test_closest_words():
 
 
 if __name__ == '__main__':
-    sp.plot_cross_val()
+    pprint(sp.get_coeffs())
     print('done!')

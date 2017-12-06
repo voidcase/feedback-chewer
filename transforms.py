@@ -6,6 +6,7 @@ import util
 import autocorrect
 import pickle
 import sys
+import os
 from word_sentimenter import find_posi_nega_tokens
 from comment import Comment
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -66,7 +67,7 @@ def auto_correct_transform(df:pd.DataFrame) -> pd.DataFrame:
     :return: ~tokens
     """
     cache = {}
-    if sys.path.exists(util.AUTOCORRECT_PICKLE_FILE):
+    if os.path.exists(util.AUTOCORRECT_PICKLE_FILE):
         cache = pickle.load(open(util.AUTOCORRECT_PICKLE_FILE, 'rb'))
     ret = df.copy() #type: pd.DataFrame
     ret['tokens'] = ret.apply(lambda row: [_spell_and_cache(t,cache) for t in row['tokens']],axis=1)
