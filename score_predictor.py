@@ -109,13 +109,36 @@ def cross_val() -> dict:
 
 def get_coeffs():
     df = maxiv_data.get_split_set()
-    df = apply_transforms(df,['tokenizing', 'binarizing', 'tfidf', 'embedding'])
+    df = apply_transforms(df,['tokenizing', 'autocorrect', 'binarizing', 'tfidf'])
     x, y = get_xy(df)
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.33)
     lr = LogisticRegression()
     lr.fit(x_train, y_train)
+    predicted = lr.predict(x_test)
+    print('accuracy: ', accuracy_score(y_test, predicted))
+    print('f1: ', f1_score(y_test, predicted))
+    print('confusion matrix: \n', confusion_matrix(y_test, predicted))
     tups = zip(lr.coef_[0], list(x))
     return sorted(list(tups))
+
+def plot_cross_val():
+    for label, transforms in [('tfidf', ['tfidf']),
+                              # ('embedding',['embedding']),
+                              # ('tfidf_embedding', ['tfidf', 'embedding'])
+                              ]:
+        df = maxiv_data.get_split_set()
+        df = apply_transforms(df,['tokenizing', 'autocorrecting','binarizing'] + transforms)
+        x, y = get_xy(df)
+        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.33)
+        # print(y_test)
+        lr = LogisticRegression(class_weight='balanced')
+        lr.fit(x_train,y_train)
+        predicted = lr.predict(x_test)
+        confusion_matrix = ConfusionMatrix(y_test.values, predicted)
+        print(confusion_matrix)
+        print(f1_score(y_test,predicted))
+        confusion_matrix.plot()
+        plt.show()
 
 def cross_dataset_eval():
     train = amazon_data.get_set()

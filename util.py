@@ -39,7 +39,8 @@ DEFAULT_CONFIG = {
 }
 NUMBER_DIMENSIONS = 256
 SCOREPAIRS =[(['Overall comments',  'Remarks'], ['Overall']),
-             (['Experiment comments', 'Infrastructure comment'],
+             (['Infrastructure comment'],['DUO']),
+             (['Experiment comments'],
               ['Scientific support', 'Technical support',
                                      'Beamline hardware',
                                      'Beamline software',

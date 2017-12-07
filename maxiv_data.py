@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import util
 
 def _all_scores(row:pd.Series) -> list:
@@ -23,6 +24,7 @@ def unify_text(df:pd.DataFrame) -> pd.DataFrame:
 
 def split_scores_comments(df:pd.DataFrame) -> pd.DataFrame:
     dataframes = []
+    df = df.replace(0, np.nan)
     for comments, scores in util.SCOREPAIRS:
         df[str(comments)] = ""
         df[str(scores)] = 0
@@ -31,6 +33,7 @@ def split_scores_comments(df:pd.DataFrame) -> pd.DataFrame:
         for score in scores:
             df[str(scores)] += df[score] / len(scores)
         temp_df = pd.DataFrame({'text': df[str(comments)], 'score': df[str(scores)]})
+        temp_df = temp_df.dropna(how='any')
         dataframes.append(temp_df) #type:pd.DataFrame
     dataframe = pd.concat(dataframes) #type:pd.DataFrame
     return dataframe
