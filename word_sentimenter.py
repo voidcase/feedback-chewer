@@ -8,9 +8,9 @@ def find_posi_nega_tokens(comment: Comment) -> (list, list):
     positives = data.get_txt_lineset(util.POSITIVE_DATA)
     negatives = data.get_txt_lineset(util.NEGATIVE_DATA)
     tokens = [x.lower() for x in comment.lemmas]
-    nega_indices = [i for i, w in enumerate(tokens) if w in negatives]
-    posi_indices = [i for i, w in enumerate(tokens) if w in positives]
-    return (posi_indices, nega_indices)
+    negatokens = [(i, w) for i, w in enumerate(tokens) if w in negatives]
+    positokens = [(i, w) for i, w in enumerate(tokens) if w in positives]
+    return (positokens, negatokens)
 
 
 def find_nps(comment: Comment, positokens, negatokens) -> (set, set):
@@ -22,13 +22,13 @@ def find_nps(comment: Comment, positokens, negatokens) -> (set, set):
                            [reversed(comment.connections[j]) for j in subjects]
     positive_nouns, negative_nouns = set(), set()
     for j, i in relevant_connections:
-        for w in posi:
+        for w, _ in posi:
             if w == i and comment.pos[j] in ['NN', 'NNS']:
                 if has_connection(comment, i, 'neg'):
                     negative_nouns = negative_nouns.union(find_compound_conj(comment, j))
                 else:
                     positive_nouns = positive_nouns.union(find_compound_conj(comment, j))
-        for w in nega:
+        for w, _ in nega:
             if w == i and comment.pos[j] in ['NN', 'NNS']:
                 if has_connection(comment, i, 'neg'):
                     positive_nouns = positive_nouns.union(find_compound_conj(comment, j))

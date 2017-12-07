@@ -74,6 +74,7 @@ def get_xy(model:pd.DataFrame) -> (pd.DataFrame, pd.Series):
 
 def apply_transforms(df:pd.DataFrame,transforms:list) -> pd.DataFrame:
     for label, transform in [
+        #('sentencing',tf.sentence_split_transform),
         ('tokenizing',tf.token_transform),
         ('binarizing',tf.binarize_transform),
         ('tfidf', tf.tfidf_transform),
@@ -158,5 +159,3 @@ def cross_dataset_eval():
         pred_y = model.predict(test_x)
         scores[label] = accuracy_score(test_y, pred_y)
     return scores
-
-
