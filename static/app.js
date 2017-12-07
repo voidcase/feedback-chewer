@@ -8,11 +8,35 @@ $(document).ready(function() {
                 .addClass('list-group-item')
                 .append($('<span></span>')
                     .addClass('badge')
-                    .addClass('badge-info')
+                    .addClass((item.score >= 0 ) ? 'badge-info' : 'badge-danger')
                     .text(item.score)
                     )
                 .append(' ')
                 .append($('<span></span>').text(item.word))
+                .click(x => {
+                    $('#card-list').empty();
+                    $.ajax({
+                        url: '/mentions',
+                        data: {word: item.word},
+                        success: function(response) {
+                            $('#card-list')
+                                .append($('<h3></h3>').text(item.word))
+                                .append(
+                                response.map(
+                                    text => $('<div></div>')
+                                        .addClass('card')
+                                        .addClass('card-primary')
+                                        .addClass('mb-3')
+                                        .append(
+                                            $('<div></div>')
+                                                .addClass('card-block')
+                                                .append($('<p></p>').text(text))
+                                        )
+                                )
+                            )
+                        }
+                    });
+                })
             );
             $('#keyword-list').append(listItems)
         }

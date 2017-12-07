@@ -30,7 +30,7 @@ OWN_WORDVEC_PICKLE_FILE = 'pickles/ownwordvec.pickle'
 AUTOCORRECT_PICKLE_FILE = 'pickles/autocorrect.pickle'
 DROPTEST = ['Proposal'] + SCORE_TYPES + EXTERNAL_FACTOR_HEADERS + DATE_HEADERS
 TARGET = 'Overall'
-VARIANCE_THRESHOLD = 1
+VARIANCE_THRESHOLD = 0.1
 MIN_DF= 0.01
 DEFAULT_CONFIG = {
     'target': 'Overall',

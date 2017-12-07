@@ -2,6 +2,8 @@ from flask import Flask, render_template, jsonify, request
 from word_sentimenter import create_dict
 from comment import Comment
 from score_predictor import get_coeffs
+from new_hope import statements_with
+import maxiv_data
 import wordset
 
 app = Flask(__name__)
@@ -21,6 +23,12 @@ def keywords():
     pairs = get_coeffs()
     dicts = [{'word':word.replace('word_',''), 'score':round(score,3)} for score, word in pairs if type(word) == str]
     return jsonify(dicts)
+
+@app.route('/mentions')
+def mentions():
+    df = maxiv_data.get_split_set()
+    return jsonify(statements_with(request.args.get('word'), df))
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=7001)

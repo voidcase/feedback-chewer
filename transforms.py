@@ -80,3 +80,14 @@ def posinega_count_transform(df:pd.DataFrame) -> pd.DataFrame:
     """
     pairs = df.apply(lambda row: find_posi_nega_tokens(Comment(df['text'])), axis=1)
     # NOT DONE
+
+def sentence_split_transform(df:pd.DataFrame) -> pd.DataFrame:
+    dropem = []
+    for index, row in df.iterrows():
+        sentences = row['text'].split('. ')
+        for s in sentences:
+            new_row = row.copy()
+            df.append(new_row)
+        dropem.append(index)
+    df.drop(dropem)
+    return df

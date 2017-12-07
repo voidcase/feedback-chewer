@@ -134,5 +134,3 @@ def cross_dataset_eval():
         pred_y = model.predict(test_x)
         scores[label] = accuracy_score(test_y, pred_y)
     return scores
-
-

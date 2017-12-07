@@ -1,9 +1,10 @@
 import maxiv_data
 from comment import Comment
 import pandas as pd
-from word_sentimenter import positivity, negativity
+from word_sentimenter import positivity, negativity, find_posi_nega_tokens
 from pprint import pprint
 from wordset import build_wordset
+import transforms
 
 def get_all_nouns() -> set:
     df = maxiv_data.get_set()
@@ -16,13 +17,18 @@ def get_all_nouns() -> set:
     return nouns
 
 def statements_with(keyword:str, df:pd.DataFrame) -> list:
-    return [t for t in df['text'] if keyword in t]
+    return [t for t in df['text'] if keyword.lower() in t.lower()]
 
 def word_badness(keyword:str,df:pd.DataFrame):
     statements = statements_with(keyword, df)
     frequency = len(statements)
-    return sum([positivity(Comment(n)) for n in statements]) / frequency
+    return sum([negativity(Comment(n)) for n in statements]) / frequency
 
+def surrounding_good_and_bad(keyword:str, df:pd.DataFrame):
+    statements = statements_with(keyword, df)
+    comments =  [Comment(statement) for statement in statements]
+    print('wrapped in comments')
+    return [find_posi_nega_tokens(c) for c in comments]
 
 def get_noun_scores() -> dict:
     nouns = build_wordset()
@@ -43,5 +49,6 @@ def test_nouns():
     assert "worked" not in nouns
 
 if __name__ == '__main__':
-    df = maxiv_data.get_set()
-    pprint(word_badness("chemistry", df))
+    df = maxiv_data.get_split_set()
+    df = transforms.sentence_split_transform(df)
+    pprint(surrounding_good_and_bad("lunch", df))
