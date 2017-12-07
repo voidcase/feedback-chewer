@@ -75,5 +75,5 @@ def test_closest_words():
 
 
 if __name__ == '__main__':
-    pprint(sp.get_coeffs())
+    pprint(test_cross_validation())
     print('done!')

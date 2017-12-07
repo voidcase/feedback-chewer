@@ -3,6 +3,7 @@ from word_sentimenter import create_dict
 from comment import Comment
 from score_predictor import get_coeffs
 from new_hope import statements_with
+from transforms import sentence_split_transform
 import maxiv_data
 import wordset
 
@@ -27,6 +28,8 @@ def keywords():
 @app.route('/mentions')
 def mentions():
     df = maxiv_data.get_split_set()
+    df = sentence_split_transform(df)
+    print(df['text'])
     return jsonify(statements_with(request.args.get('word'), df))
 
 

@@ -51,4 +51,6 @@ def test_nouns():
 if __name__ == '__main__':
     df = maxiv_data.get_split_set()
     df = transforms.sentence_split_transform(df)
-    pprint(surrounding_good_and_bad("lunch", df))
+    #pprint(surrounding_good_and_bad("lunch", df))
+    print(word_badness("support", df))
+    #transforms.test_sentence_split_transform()

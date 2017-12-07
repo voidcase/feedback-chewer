@@ -7,6 +7,7 @@ import autocorrect
 import pickle
 import sys
 import os
+import re
 from word_sentimenter import find_posi_nega_tokens
 from comment import Comment
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -83,12 +84,22 @@ def posinega_count_transform(df:pd.DataFrame) -> pd.DataFrame:
     # NOT DONE
 
 def sentence_split_transform(df:pd.DataFrame) -> pd.DataFrame:
+    """
+    :param df: req text
+    :return: splits rows by sentences in text
+    """
     dropem = []
     for index, row in df.iterrows():
-        sentences = row['text'].split('. ')
+        sentences = re.split(r'[.?!] ', row['text'])
         for s in sentences:
             new_row = row.copy()
-            df.append(new_row)
+            new_row['text'] = s
+            df = pd.concat([df, pd.DataFrame([new_row])],ignore_index=True)
         dropem.append(index)
-    df.drop(dropem)
+    df = df.drop(dropem)
     return df
+
+def test_sentence_split_transform():
+    df = pd.DataFrame([['Here is a sentence! Here is another.', 4]], columns=['text','score'])
+    df = sentence_split_transform(df)
+    print(df)
