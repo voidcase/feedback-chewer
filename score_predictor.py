@@ -122,21 +122,22 @@ def get_coeffs():
     return sorted(list(tups))
 
 def plot_cross_val():
-    for label, transforms in [('tfidf', ['tfidf']),
+    for label, transforms in [# ('tfidf', ['tfidf']),
                               # ('embedding',['embedding']),
-                              # ('tfidf_embedding', ['tfidf', 'embedding'])
+                              ('tfidf_embedding', ['tfidf', 'embedding'])
                               ]:
         df = maxiv_data.get_split_set()
-        df = apply_transforms(df,['tokenizing', 'autocorrecting','binarizing'] + transforms)
+        df = apply_transforms(df,['tokenizing', 'binarizing'] + transforms)
         x, y = get_xy(df)
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.33)
         # print(y_test)
         lr = LogisticRegression(class_weight='balanced')
-        lr.fit(x_train,y_train)
-        predicted = lr.predict(x_test)
-        confusion_matrix = ConfusionMatrix(y_test.values, predicted)
-        print(confusion_matrix)
-        print(f1_score(y_test,predicted))
+        # lr.fit(x_train,y_train)
+        predicted = cross_val_predict(lr,x,y)
+        print(predicted)
+        confusion_matrix = ConfusionMatrix(y, predicted)
+        # print(confusion_matrix)
+        print(f1_score(y,predicted))
         confusion_matrix.plot()
         plt.show()
 
