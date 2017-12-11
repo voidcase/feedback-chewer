@@ -4,6 +4,7 @@ import util
 import requests
 import pickle
 import os
+import io
 import random
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.feature_selection import VarianceThreshold
@@ -11,6 +12,7 @@ from sklearn import preprocessing
 import autocorrect
 import wordset
 import gensim
+from pprint import pprint
 from scipy.spatial.distance import cdist
 import json
 
@@ -129,7 +131,7 @@ def parse_date(column):
     return column
 
 
-def dependency_parse(comment, cache_file=util.VILDE_PICKLE_FILE):
+def json_dependency_parse(comment, cache_file=util.VILDE_PICKLE_FILE):
     cache = {}
     try:
         cache = pickle.load(open(cache_file, 'rb'))
@@ -142,6 +144,21 @@ def dependency_parse(comment, cache_file=util.VILDE_PICKLE_FILE):
     cache[comment] = response['DM10']
     pickle.dump(cache, open(cache_file, 'wb'))
     return response['DM10']
+
+def dependency_parse(comment, cache_file=util.VILDE_PICKLE_FILE):
+    cache = {}
+    try:
+        cache = pickle.load(open(cache_file, 'rb'))
+        if comment in cache:
+            return cache[comment]
+    except FileNotFoundError:
+        if not os.path.exists('pickles/'):
+            os.makedirs('pickles/')
+    response = requests.post(url="http://vilde.cs.lth.se:9000/en/default/api/tsv", data=comment)
+    response_frame = pd.read_csv(io.StringIO(response.text), sep='\t')
+    cache[comment] = response_frame
+    pickle.dump(cache, open(cache_file, 'wb'))
+    return response_frame
 
 
 def get_txt_lineset(filename: str) -> set:
