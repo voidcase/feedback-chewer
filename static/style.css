@@ -19,3 +19,8 @@
     content: "-";
     margin-right: 4px;
 }
+
+#keyword-list {
+    overflow: scroll;
+    height: 90vh;
+}
