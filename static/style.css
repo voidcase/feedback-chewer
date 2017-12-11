@@ -20,7 +20,7 @@
     margin-right: 4px;
 }
 
-#keyword-list {
-    overflow: scroll;
+#keyword-list, #card-list {
+    overflow-y: scroll;
     height: 90vh;
 }
