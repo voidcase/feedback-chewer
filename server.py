@@ -28,7 +28,7 @@ def keywords():
 @app.route('/mentions')
 def mentions():
     df = maxiv_data.get_split_set()
-    # df = sentence_split_transform(df)
+    df = sentence_split_transform(df)
     print(df['text'])
     return jsonify(statements_with(request.args.get('word'), df))
 
