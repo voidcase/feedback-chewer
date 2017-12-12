@@ -1,29 +1,35 @@
 import data_extractor as data
 import pandas as pd
+import re
 
-df = data.dependency_parse('the beamline was perfect as always')
-print(df)
-def find_nps(df:pd.DataFrame, keyword:str):
-    nps = df[(df['pos'] == 'NN') | (df['pos'] == 'NNS')]
-    return nps['form'].values
-
-def find_compounds(df:pd.DataFrame, keyword:str):
-    keyword_rows = df[df['form'] == keyword]
-    keyword_ids = keyword_rows['#id'].values
-    keyword_heads = keyword_rows['head'].values
+def find_context(comment:str, keyword:str):
+    df = data.dependency_parse(comment)
+    keywords = re.split(' ', keyword)
+    keyword_rows = []
+    for keyword in keywords:
+        keyword_df = df[df['form'].str.contains(keyword)]
+        keyword_rows.append(keyword_df)
+    keyword_frame = pd.concat(keyword_rows) #type:pd.DataFrame
+    keyword_ids = keyword_frame['#id'].values
+    keyword_heads = keyword_frame['head'].values
     keyword_tups = zip(keyword_ids, keyword_heads)
     dataframe_rows = []
     for id, head in keyword_tups:
-        rows = df[( (df['head'] == id) &        #childs but not all
+        rows = df[( (df['head'] == id) &    #childs but not all
                     (df['deprel'] != 'conj') &
                     (df['deprel'] != 'cc') &
                     (df['deprel'] != 'nmod')
-                    )
+                  )
                   |
-                 ( df['#id'] == head ) #parents
+                  ( df['#id'] == head )     #parents
+                  |
+                  ( (df['head'] == head) &  #compounds
+                    (df['deprel'] == 'compound') &
+                    (df['#id'] != id)
+                  )
         ]
         dataframe_rows.append(rows)
-    dataframe_rows.append(keyword_rows)
-    dataframe = pd.concat(dataframe_rows)
-    return dataframe
-print(find_compounds(df, 'beamline'))
+    dataframe_rows.append(keyword_frame)
+    dataframe = pd.concat(dataframe_rows) #type:pd.DataFrame
+    start_indices = set(dataframe['start'].values)
+    return start_indices
