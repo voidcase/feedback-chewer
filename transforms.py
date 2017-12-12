@@ -90,7 +90,7 @@ def sentence_split_transform(df:pd.DataFrame) -> pd.DataFrame:
     """
     ret = pd.DataFrame(columns=list(df))
     for index, row in df.iterrows():
-        sentences = re.split(r'[.?!] ', row['text'])
+        sentences = re.split(r'[.?!]\s+', row['text'])
         for s in sentences:
             new_row = row.copy()
             new_row['text'] = s
