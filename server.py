@@ -8,6 +8,8 @@ import maxiv_data
 import wordset
 
 app = Flask(__name__)
+df = maxiv_data.get_split_set()
+df = sentence_split_transform(df)
 
 @app.route('/')
 def index():
@@ -27,8 +29,7 @@ def keywords():
 
 @app.route('/mentions')
 def mentions():
-    df = maxiv_data.get_split_set()
-    df = sentence_split_transform(df)
+
     print(df['text'])
     return jsonify(statements_with(request.args.get('word'), df))
 
