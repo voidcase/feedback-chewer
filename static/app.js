@@ -3,7 +3,6 @@ $.prototype.highlight = function (words) {
             re = RegExp(w, 'gi')
             this.html(this.html().replace(re, $('<mark></mark>').text(w).prop('outerHTML')))
             console.log(this.html())
-            //this.html("<p>AAAAAAAAAAAAAAAAAAAAAAAAA</p>")
         });
     return this;
 }
@@ -15,7 +14,7 @@ $(document).ready(function() {
         dataType: 'json',
         success: function(response) {
             var listItems = response.map(item => $('<li></li>')
-                .addClass('list-group-item')
+                .addClass('list-group-item list-group-item-action')
                 .append($('<span></span>')
                     .addClass('badge')
                     .addClass((item.score >= 0 ) ? 'badge-info' : 'badge-danger')
@@ -28,19 +27,23 @@ $(document).ready(function() {
                     $.ajax({
                         url: '/mentions',
                         data: {word: item.word},
-                        success: function(response) {
+                        success: function(card_res) {
                             $('#card-list')
                                 .append($('<h3></h3>').text(item.word))
                                 .append(
-                                response.map(
-                                    text => $('<div></div>')
+                                card_res.map(
+                                    statement => $('<div></div>')
                                         .addClass('card')
-                                        .addClass('card-primary')
+                                        .addClass('border-' + ((statement.score > 3.5) ? 'primary' : 'danger'))
                                         .addClass('mb-3')
                                         .append(
                                             $('<div></div>')
-                                                .addClass('card-block')
-                                                .append($('<p></p>').text(text).highlight([item.word]))
+                                                .addClass('card-body')
+                                                .append($('<p></p>')
+                                                    .addClass('card-text')
+                                                    .text(statement.text)
+                                                    .highlight([item.word])
+                                                )
                                         )
                                 )
                             )

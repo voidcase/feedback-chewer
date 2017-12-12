@@ -17,22 +17,22 @@ def get_all_nouns() -> set:
     return nouns
 
 def statements_with(keyword:str, df:pd.DataFrame) -> list:
-    return [t for t in df['text'] if keyword.lower() in t.lower()]
+    return [{'score': row['score'], 'text': row['text']} for index, row in df.iterrows() if keyword.lower() in row['text'].lower()]
 
 def word_badness(keyword:str,df:pd.DataFrame):
     statements = statements_with(keyword, df)
     frequency = len(statements)
-    return sum([negativity(Comment(n)) for n in statements]) / frequency
+    return sum([negativity(Comment(n['text'])) for n in statements]) / frequency
 
 def surrounding_good_and_bad(keyword:str, df:pd.DataFrame):
     statements = statements_with(keyword, df)
-    comments =  [Comment(statement) for statement in statements]
+    comments =  [Comment(statement['text']) for statement in statements]
     print('wrapped in comments')
     return [find_posi_nega_tokens(c) for c in comments]
 
 def get_noun_scores() -> dict:
-    nouns = build_wordset()
     df = maxiv_data.get_set()
+    nouns = build_wordset(df,['text'])
     return {
         n : sum([
             positivity(Comment(x)) for x in statements_with(n, df)
