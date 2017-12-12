@@ -88,18 +88,21 @@ def sentence_split_transform(df:pd.DataFrame) -> pd.DataFrame:
     :param df: req text
     :return: splits rows by sentences in text
     """
-    dropem = []
+    ret = pd.DataFrame(columns=list(df))
     for index, row in df.iterrows():
         sentences = re.split(r'[.?!] ', row['text'])
         for s in sentences:
             new_row = row.copy()
             new_row['text'] = s
-            df = pd.concat([df, pd.DataFrame([new_row])],ignore_index=True)
-        dropem.append(index)
-    df = df.drop(dropem)
-    return df
+            ret = pd.concat([ret, pd.DataFrame([new_row])],ignore_index=True)
+    return ret
 
 def test_sentence_split_transform():
-    df = pd.DataFrame([['Here is a sentence! Here is another.', 4]], columns=['text','score'])
+    import maxiv_data
+    df = maxiv_data.get_split_set()
+    #df = pd.DataFrame([['Here is a sentence! Here is another.', 4]], columns=['text','score'])
     df = sentence_split_transform(df)
     print(df)
+
+if __name__ == '__main__':
+    test_sentence_split_transform()

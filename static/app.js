@@ -1,3 +1,13 @@
+$.prototype.highlight = function (words) {
+    words.forEach(w => {
+            re = RegExp(w, 'gi')
+            this.html(this.html().replace(re, $('<mark></mark>').text(w).prop('outerHTML')))
+            console.log(this.html())
+            //this.html("<p>AAAAAAAAAAAAAAAAAAAAAAAAA</p>")
+        });
+    return this;
+}
+
 console.log('JS loaded!');
 $(document).ready(function() {
     $.ajax({
@@ -30,7 +40,7 @@ $(document).ready(function() {
                                         .append(
                                             $('<div></div>')
                                                 .addClass('card-block')
-                                                .append($('<p></p>').text(text))
+                                                .append($('<p></p>').text(text).highlight([item.word]))
                                         )
                                 )
                             )

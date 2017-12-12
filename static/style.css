@@ -19,3 +19,8 @@
     content: "-";
     margin-right: 4px;
 }
+
+#keyword-list, #card-list {
+    overflow-y: scroll;
+    height: 90vh;
+}
