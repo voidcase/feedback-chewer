@@ -11,7 +11,7 @@ from sklearn.feature_selection import VarianceThreshold
 from sklearn import preprocessing
 import autocorrect
 import wordset
-import gensim
+# import gensim
 from pprint import pprint
 from scipy.spatial.distance import cdist
 import json
@@ -164,7 +164,6 @@ def dependency_parse(comment, cache_file=util.VILDE_PICKLE_FILE):
 def get_txt_lineset(filename: str) -> set:
     with open(filename, 'r', encoding='utf-8') as datafile:
         return set(x.strip() for x in datafile)
-
 
 
 def parse_word_vectors(filename:str) -> dict:

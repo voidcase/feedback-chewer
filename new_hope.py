@@ -1,7 +1,7 @@
 import maxiv_data
 from comment import Comment
 import pandas as pd
-from word_sentimenter import positivity, negativity, find_posi_nega_tokens
+from old_word_sentimenter import positivity, negativity, find_posi_nega_tokens
 from pprint import pprint
 from wordset import build_wordset
 import transforms

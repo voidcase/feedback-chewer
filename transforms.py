@@ -8,7 +8,7 @@ import pickle
 import sys
 import os
 import re
-from word_sentimenter import find_posi_nega_tokens
+from old_word_sentimenter import find_posi_nega_tokens
 from comment import Comment
 from sklearn.feature_extraction.text import TfidfVectorizer
 

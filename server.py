@@ -1,5 +1,5 @@
 from flask import Flask, render_template, jsonify, request
-from word_sentimenter import create_dict
+from old_word_sentimenter import create_dict
 from comment import Comment
 from score_predictor import get_coeffs
 from new_hope import statements_with
