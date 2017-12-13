@@ -3,14 +3,18 @@ import pandas as pd
 import re
 
 def find_context(comment:str, keyword:str) -> list:
+    print('comment:', comment, 'keyword:', keyword)
     df = data.dependency_parse(comment)
     keywords = re.split(' ', keyword)
     keyword_rows = []
     for keyword in keywords:
-        keyword_df = df[df['form'] == keyword]
+        keyword_df = df[df['form'].str.lower() == keyword.lower()]
         keyword_rows.append(keyword_df)
     keyword_frame = pd.concat(keyword_rows) #type:pd.DataFrame
     keyword_ids = keyword_frame['#id'].values
+    print(keyword_frame)
+    if 'head' not in keyword_frame:
+        return list(int(i) for i in keyword_frame['start'].values)
     keyword_heads = keyword_frame['head'].values
     keyword_tups = zip(keyword_ids, keyword_heads)
     dataframe_rows = []

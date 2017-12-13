@@ -5,6 +5,7 @@ from old_word_sentimenter import positivity, negativity, find_posi_nega_tokens
 from pprint import pprint
 from wordset import build_wordset
 import transforms
+import re
 
 def get_all_nouns() -> set:
     df = maxiv_data.get_set()
@@ -17,7 +18,11 @@ def get_all_nouns() -> set:
     return nouns
 
 def statements_with(keyword:str, df:pd.DataFrame) -> list:
-    return [{'score': row['score'], 'text': row['text']} for index, row in df.iterrows() if keyword.lower() in row['text'].lower()]
+    return [
+        {'score': row['score'], 'text': row['text']}
+        for index, row in df.iterrows()
+        if re.search(r"\b" + keyword.lower() + r"\b", row['text'].lower()) != None
+    ]
 
 def word_badness(keyword:str,df:pd.DataFrame):
     statements = statements_with(keyword, df)

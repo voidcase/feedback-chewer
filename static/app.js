@@ -38,6 +38,7 @@ $(document).ready(function() {
                         url: '/mentions',
                         data: {word: item.word},
                         success: function(card_res) {
+                            $('#card-list').empty();
                             console.log('got response');
                             $('#card-list')
                                 .append($('<h3></h3>').text(item.word))
