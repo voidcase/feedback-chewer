@@ -11,6 +11,7 @@ import wordset
 app = Flask(__name__)
 df = maxiv_data.get_split_set()
 df = sentence_split_transform(df)
+coeffs = get_coeffs()
 
 @app.route('/')
 def index():
@@ -24,19 +25,18 @@ def annotate():
 @app.route('/keywords')
 def keywords():
     # mockup
-    pairs = get_coeffs()
+    pairs = coeffs
     dicts = [{'word':word.replace('word_',''), 'score':round(score,3)} for score, word in pairs if type(word) == str]
     return jsonify(dicts)
 
 @app.route('/mentions')
 def mentions():
-
-    print(df['text'])
     word = request.args.get('word')
     stmts = statements_with(word, df)
+    print('found statements')
     for s in stmts:
         s['highlights'] = find_context(s['text'], word)
-    print(stmts)
+    print('found contexts')
     return jsonify(stmts)
 
 
