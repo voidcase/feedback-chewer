@@ -75,5 +75,5 @@ def test_closest_words():
 
 
 if __name__ == '__main__':
-    test_dep_parse()
+    sp.cross_val()
     print('done!')
