@@ -22,6 +22,7 @@ $(document).ready(function() {
     $.ajax({
         url: '/keywords',
         dataType: 'json',
+//        data: {checkboxes: $('#type-checkboxes').children().filter((x,y) => y.checked).map((x,y) => y.id).toArray()},
         success: function(response) {
             var listItems = response.map(item => $('<li></li>')
                 .addClass('list-group-item list-group-item-action')
