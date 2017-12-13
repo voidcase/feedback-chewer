@@ -4,14 +4,13 @@ from sklearn.pipeline import Pipeline
 from sklearn.model_selection import cross_val_score, cross_validate, cross_val_predict, train_test_split
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier
-import plotly.plotly as py
-import plotly.graph_objs as go
+import csv
 from pandas_ml import ConfusionMatrix
 from sklearn.naive_bayes import GaussianNB
 from sklearn import svm
 from sklearn.metrics import accuracy_score, f1_score
 from embedding_vectorizer import EmbeddingVectorizer
-from data_extractor import data_extract_comments, parse_word_vectors, data_extract_tfidf_comments, create_word_embeddings
+from data_extractor import data_extract_comments, parse_word_vectors, dependency_parse
 from sklearn.metrics import confusion_matrix, make_scorer
 import seaborn as sn
 import pandas as pd
@@ -86,41 +85,42 @@ def apply_transforms(df:pd.DataFrame,transforms:list) -> pd.DataFrame:
             df = transform(df)
     return df
 
-def cross_val() -> dict:
-    df = maxiv_data.get_split_set()
-    df = apply_transforms(df,['tokenizing','binarizing','tfidf'])
-    print(df)
-    x, y = get_xy(df)
+def cross_val():
+    with open('plots/scores.csv', 'w') as csvfile:
+        fieldnames = ['classifier', 'tfidf', 'embedding','tfidf+embedding']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        models = make_models(w2v=False, own=False)
+        for label, model in models.items():
+            modeldict = {'classifier':label}
+            for transformlabel, transforms in [ ('tfidf', ['tfidf']),
+                                                ('embedding',['embedding']),
+                                                ('tfidf+embedding', ['tfidf', 'embedding'])]:
+                df = amazon_data.get_set()
+                df = apply_transforms(df,['tokenizing','binarizing'] + transforms)
+                x, y = get_xy(df)
+                modeldict[transformlabel] = np.mean(cross_val_score(model, x, y, scoring='f1'))
+            writer.writerow(modeldict)
+            print(modeldict)
 
-    # models_with_word_embedding = make_models(w2v=True, own=False)
-    models_without_word_embedding = make_models(w2v=False, own=False)
-
-    # cv_precisions_with = {
-    #     label: cross_val_score(model, x, y, scoring='accuracy')
-    #     for label, model in models_with_word_embedding.items()
-    # }
-
-    cv_precisions_without = {
-        label: cross_val_score(model, x, y, scoring='f1')
-        for label, model in models_without_word_embedding.items()
-    }
-
-    return cv_precisions_without
-
-
-def get_coeffs():
+def get_coeffs(types=['adverbs','adjectives', 'verbs', 'nouns']):
     df = maxiv_data.get_split_set()
     df = apply_transforms(df,['tokenizing', 'autocorrect', 'binarizing', 'tfidf'])
     x, y = get_xy(df)
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.33)
     lr = LogisticRegression()
     lr.fit(x_train, y_train)
-    predicted = lr.predict(x_test)
-    print('accuracy: ', accuracy_score(y_test, predicted))
-    print('f1: ', f1_score(y_test, predicted))
-    print('confusion matrix: \n', confusion_matrix(y_test, predicted))
-    tups = zip(lr.coef_[0], list(x))
-    return sorted(list(tups))
+    tups = list(zip(lr.coef_[0], list(x)))
+    filtered_tups = filter(lambda x : typefilter(types, x[1]), tups)
+    return sorted(list(filtered_tups))
+
+def typefilter(types:list, string):
+    dict = {'adverbs': 'ADV', 'adjectives': 'ADJ', 'verbs': 'VERB', 'nouns': 'NOUN'}
+    postags = [dict[type] for type in types]
+    df = dependency_parse(string)
+    for index, row in df.iterrows():
+        if row['cpostag'] in postags: return True
+    return False
 
 def plot_cross_val():
     for label, transforms in [# ('tfidf', ['tfidf']),

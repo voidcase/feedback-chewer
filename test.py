@@ -8,7 +8,6 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 import maxiv_data
 from pprint import pprint
-import new_hope
 
 import score_predictor as sp
 
@@ -76,5 +75,5 @@ def test_closest_words():
 
 
 if __name__ == '__main__':
-    print(new_hope.get_noun_scores())
+    sp.cross_val()
     print('done!')
