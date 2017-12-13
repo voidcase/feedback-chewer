@@ -4,8 +4,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.model_selection import cross_val_score, cross_validate, cross_val_predict, train_test_split
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier
-import plotly.plotly as py
-import plotly.graph_objs as go
+import csv
 from pandas_ml import ConfusionMatrix
 from sklearn.naive_bayes import GaussianNB
 from sklearn import svm
@@ -86,27 +85,23 @@ def apply_transforms(df:pd.DataFrame,transforms:list) -> pd.DataFrame:
             df = transform(df)
     return df
 
-def cross_val() -> dict:
-    df = maxiv_data.get_split_set()
-    df = apply_transforms(df,['tokenizing','binarizing','tfidf'])
-    print(df)
-    x, y = get_xy(df)
-
-    # models_with_word_embedding = make_models(w2v=True, own=False)
-    models_without_word_embedding = make_models(w2v=False, own=False)
-
-    # cv_precisions_with = {
-    #     label: cross_val_score(model, x, y, scoring='accuracy')
-    #     for label, model in models_with_word_embedding.items()
-    # }
-
-    cv_precisions_without = {
-        label: cross_val_score(model, x, y, scoring='f1')
-        for label, model in models_without_word_embedding.items()
-    }
-
-    return cv_precisions_without
-
+def cross_val():
+    with open('plots/scores.csv', 'w') as csvfile:
+        fieldnames = ['classifier', 'tfidf', 'embedding','tfidf+embedding']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        models = make_models(w2v=False, own=False)
+        for label, model in models.items():
+            modeldict = {'classifier':label}
+            for transformlabel, transforms in [ ('tfidf', ['tfidf']),
+                                                ('embedding',['embedding']),
+                                                ('tfidf+embedding', ['tfidf', 'embedding'])]:
+                df = amazon_data.get_set()
+                df = apply_transforms(df,['tokenizing','binarizing'] + transforms)
+                x, y = get_xy(df)
+                modeldict[transformlabel] = np.mean(cross_val_score(model, x, y, scoring='f1'))
+            writer.writerow(modeldict)
+            print(modeldict)
 
 def get_coeffs():
     df = maxiv_data.get_split_set()
