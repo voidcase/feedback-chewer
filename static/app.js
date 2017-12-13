@@ -5,7 +5,17 @@ $.prototype.highlight = function (words) {
             console.log(this.html())
         });
     return this;
-}
+};
+
+$.prototype.highlightIndices = function (charIndices) {
+    wordIndices = charIndices.map(i => (this.html().slice(0,i).match(/\s+/g) || []).length);
+    tokens = this.html().split(/\s+/);
+    newtokens = tokens.map( (t, i) => (wordIndices.indexOf(i) != -1) ? $('<mark></mark>').text(t).prop('outerHTML') : t);
+    console.log(newtokens);
+    newcontent = newtokens.join(' ');
+    this.html(newcontent);
+    return this;
+};
 
 console.log('JS loaded!');
 $(document).ready(function() {
@@ -28,6 +38,7 @@ $(document).ready(function() {
                         url: '/mentions',
                         data: {word: item.word},
                         success: function(card_res) {
+                            console.log('got response');
                             $('#card-list')
                                 .append($('<h3></h3>').text(item.word))
                                 .append(
@@ -36,14 +47,13 @@ $(document).ready(function() {
                                         .addClass('card')
                                         .addClass('border-' + ((statement.score > 3.5) ? 'primary' : 'danger'))
                                         .addClass('mb-3')
-                                        .append(
-                                            $('<div></div>')
-                                                .addClass('card-body')
-                                                .append($('<p></p>')
-                                                    .addClass('card-text')
-                                                    .text(statement.text)
-                                                    .highlight([item.word])
-                                                )
+                                        .append($('<div></div>')
+                                            .addClass('card-body')
+                                            .append($('<p></p>')
+                                                .addClass('card-text')
+                                                .text(statement.text)
+                                                .highlightIndices(statement.highlights)
+                                            )
                                         )
                                 )
                             )

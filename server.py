@@ -5,6 +5,7 @@ from score_predictor import get_coeffs
 from new_hope import statements_with
 from transforms import sentence_split_transform
 import maxiv_data
+from word_sentimenter import find_context
 import wordset
 
 app = Flask(__name__)
@@ -31,7 +32,12 @@ def keywords():
 def mentions():
 
     print(df['text'])
-    return jsonify(statements_with(request.args.get('word'), df))
+    word = request.args.get('word')
+    stmts = statements_with(word, df)
+    for s in stmts:
+        s['highlights'] = find_context(s['text'], word)
+    print(stmts)
+    return jsonify(stmts)
 
 
 if __name__ == '__main__':
