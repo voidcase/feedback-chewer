@@ -103,7 +103,7 @@ def cross_val():
             writer.writerow(modeldict)
             print(modeldict)
 
-def get_coeffs(types=['adjectives', 'verbs', 'nouns']):
+def get_coeffs(types=['adverbs','adjectives', 'verbs', 'nouns']):
     df = maxiv_data.get_split_set()
     df = apply_transforms(df,['tokenizing', 'autocorrect', 'binarizing', 'tfidf'])
     x, y = get_xy(df)
