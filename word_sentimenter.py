@@ -2,14 +2,12 @@ import data_extractor as data
 import pandas as pd
 import re
 
-
-def find_context(comment:str, keyword:str):
+def find_context(comment:str, keyword:str) -> list:
     df = data.dependency_parse(comment)
-    print(df)
     keywords = re.split(' ', keyword)
     keyword_rows = []
     for keyword in keywords:
-        keyword_df = df[df['form'].str.contains(keyword)]
+        keyword_df = df[df['form'] == keyword]
         keyword_rows.append(keyword_df)
     keyword_frame = pd.concat(keyword_rows) #type:pd.DataFrame
     keyword_ids = keyword_frame['#id'].values
@@ -35,7 +33,8 @@ def find_context(comment:str, keyword:str):
         dataframe_rows.append(rows)
     dataframe_rows.append(keyword_frame)
     dataframe = pd.concat(dataframe_rows) #type:pd.DataFrame
-    start_indices = set(dataframe['start'].values)
-    return start_indices, dataframe['form'].values
+    start_indices = list(int(i) for i in dataframe['start'].values)
+    return start_indices
 
-print(find_context('the small beam was important in collecting good data from our crystals','crystals'))
+if __name__ == '__main__':
+    print(type(find_context("When we arrived to the lab, the beamline was on fire.", "beamline")[0]))
