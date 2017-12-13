@@ -111,14 +111,16 @@ def get_coeffs(types=['adjectives', 'verbs', 'nouns']):
     lr = LogisticRegression()
     lr.fit(x_train, y_train)
     tups = list(zip(lr.coef_[0], list(x)))
-    filtered_tups = filter(lambda x, y : typefilter(types,x), tups)
-    return sorted(list(tups))
-
-dict = {'adjectives':[]}
+    filtered_tups = filter(lambda x : typefilter(types, x[1]), tups)
+    return sorted(list(filtered_tups))
 
 def typefilter(types:list, string):
+    dict = {'adverbs': 'ADV', 'adjectives': 'ADJ', 'verbs': 'VERB', 'nouns': 'NOUN'}
+    postags = [dict[type] for type in types]
     df = dependency_parse(string)
-
+    for index, row in df.iterrows():
+        if row['cpostag'] in postags: return True
+    return False
 
 def plot_cross_val():
     for label, transforms in [# ('tfidf', ['tfidf']),
