@@ -10,7 +10,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn import svm
 from sklearn.metrics import accuracy_score, f1_score
 from embedding_vectorizer import EmbeddingVectorizer
-from data_extractor import data_extract_comments, parse_word_vectors, data_extract_tfidf_comments, create_word_embeddings
+from data_extractor import data_extract_comments, parse_word_vectors, dependency_parse
 from sklearn.metrics import confusion_matrix, make_scorer
 import seaborn as sn
 import pandas as pd
@@ -103,19 +103,22 @@ def cross_val():
             writer.writerow(modeldict)
             print(modeldict)
 
-def get_coeffs():
+def get_coeffs(types=['adjectives', 'verbs', 'nouns']):
     df = maxiv_data.get_split_set()
     df = apply_transforms(df,['tokenizing', 'autocorrect', 'binarizing', 'tfidf'])
     x, y = get_xy(df)
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.33)
     lr = LogisticRegression()
     lr.fit(x_train, y_train)
-    predicted = lr.predict(x_test)
-    print('accuracy: ', accuracy_score(y_test, predicted))
-    print('f1: ', f1_score(y_test, predicted))
-    print('confusion matrix: \n', confusion_matrix(y_test, predicted))
-    tups = zip(lr.coef_[0], list(x))
+    tups = list(zip(lr.coef_[0], list(x)))
+    filtered_tups = filter(lambda x, y : typefilter(types,x), tups)
     return sorted(list(tups))
+
+dict = {'adjectives':[]}
+
+def typefilter(types:list, string):
+    df = dependency_parse(string)
+
 
 def plot_cross_val():
     for label, transforms in [# ('tfidf', ['tfidf']),
