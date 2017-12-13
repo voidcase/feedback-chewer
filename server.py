@@ -26,7 +26,7 @@ def annotate():
 def keywords():
     # mockup
     pairs = coeffs
-    dicts = [{'word':word.replace('word_',''), 'score':round(score,3)} for score, word in pairs if type(word) == str]
+    dicts = [{'word':word, 'score':round(score,3)} for score, word in pairs if type(word) == str]
     return jsonify(dicts)
 
 @app.route('/mentions')

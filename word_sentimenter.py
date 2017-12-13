@@ -18,18 +18,18 @@ def find_context(comment:str, keyword:str) -> list:
     keyword_tups = zip(keyword_ids, keyword_heads)
     dataframe_rows = []
     for id, head in keyword_tups:
-        rows = df[( (df['head'] == id)    #childs but not all
-                    # (df['deprel'] != 'conj') &
-                    # (df['deprel'] != 'cc') &
-                    # (df['deprel'] != 'nmod')
+        rows = df[( (df['head'] == id)  &   #childs but not all
+                    (df['deprel'] != 'conj') &
+                    (df['deprel'] != 'cc') &
+                    (df['deprel'] != 'nmod')
                   )
                   |
                   ( df['#id'] == head )     #parents
                   |
                   ( (df['head'] == head) &  #compounds
-                    ( (df['deprel'] == 'compound')
-                      # (df['deprel'] ==  'nmod') |
-                      # (df['deprel'] == 'dep')
+                    ( (df['deprel'] == 'compound') |
+                      # (df['deprel'] ==  'nmod')
+                      (df['deprel'] == 'dep')
                     )
                   )
         ]

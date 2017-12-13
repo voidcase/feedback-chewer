@@ -31,7 +31,7 @@ def tfidf_transform(df:pd.DataFrame) -> pd.DataFrame:
     values = df['text'].values
     vectorizer = TfidfVectorizer(stop_words='english', min_df=util.MIN_DF, ngram_range=(1,3))
     tfidf_matrix = vectorizer.fit_transform(values).toarray()
-    featurenames = np.asarray(['word_' + w for w in vectorizer.get_feature_names()])
+    featurenames = np.asarray(vectorizer.get_feature_names())
     tfidf_frame = pd.DataFrame(tfidf_matrix,columns=featurenames)
     ret = pd.concat([ret, tfidf_frame], axis=1) #type:pd.DataFrame
     ret = ret.drop('text', axis=1)
