@@ -43,6 +43,3 @@ def statements_with(keyword:str, df:pd.DataFrame) -> list:
         for index, row in df.iterrows()
         if re.search(r"\b" + keyword.lower() + r"\b", row['text'].lower()) != None
     ]
-
-if __name__ == '__main__':
-    print(type(find_context("When we arrived to the lab, the beamline was on fire.", "beamline")[0]))

@@ -57,7 +57,7 @@ def cross_val(scoring = 'f1'):
                                                 ('embedding',['embedding']),
                                                 ('tfidf+embedding', ['tfidf', 'embedding'])]:
                 df = amazon_data.get_set()
-                df = apply_transforms(df,['tokenizing','binarizing'] + transforms)
+                df = apply_transforms(df,['autocorrect','tokenizing','binarizing'] + transforms)
                 x, y = get_xy(df)
                 modeldict[transformlabel] = np.mean(cross_val_score(model, x, y, scoring='f1'))
             writer.writerow(modeldict)
@@ -100,5 +100,5 @@ def typefilter(types:list, string):
     return False
 
 if __name__ == '__main__':
-    cm_cross_val() # calculate confusion matrix
+    cm_cross_val() # calculate confusion matrix (Logistic regression, can be changed)
     cross_val('f1') # cross validate all models, generate csv file with scores

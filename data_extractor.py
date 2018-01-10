@@ -6,7 +6,6 @@ import pickle
 import os
 import io
 import autocorrect
-# import gensim
 
 def auto_correct(comments: list) -> list:
     try:
@@ -57,15 +56,3 @@ def normalize_vector(vector:list) -> list:
         return vector
     else:
         return vector / norm
-
-#to check if embeddings make sense
-def compute_closest_words(vectors:dict, word, top:int) -> list:
-    items = vectors.items()
-    keys = [vect[0] for vect in items]
-    index = keys.index(word)
-    vectors = [vect[1] for vect in items]
-    a = vectors[index]
-    distances = [np.linalg.norm(a-b) for b in vectors]
-    sorted_distances = sorted([(x,y) for x,y in enumerate(distances)], key=lambda x: x[1])
-    closest = [keys[i] for i,j in sorted_distances[:top]]
-    print(closest)
