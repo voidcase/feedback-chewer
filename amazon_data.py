@@ -8,7 +8,7 @@ def get_set() -> pd.DataFrame:
     """
     rows = []
     with open(util.AMAZON_DATA,'r') as file:
-        jsons = [next(file) for i in range(100000)]
+        jsons = [next(file) for i in range(10000)]
         for entry in jsons:
             d = json.loads(entry,encoding='utf-8')
             assert(type(d['overall']) == float)
