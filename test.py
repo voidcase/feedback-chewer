@@ -31,8 +31,6 @@ def test_wordvec_parser():
     print('len:', len(the_vector))
     print('type:', type(the_vector))
 
-def test_avg():
-    print(data_extractor.get_avg_target(data_extractor.get_all_data()))
 
 def test_binarized_variance():
     df, y = data_extractor.data_extract_comments()
@@ -53,6 +51,7 @@ def test_across_datasets():
         print(label,':',score)
 
 
+#to test if embeddings make sense
 def test_closest_words():
     word_vectors = data_extractor.parse_word_vectors(util.WORDVEC_DATA)
     data_extractor.compute_closest_words(word_vectors, 'no', 10)

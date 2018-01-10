@@ -5,10 +5,6 @@ import requests
 import pickle
 import os
 import io
-import random
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-from sklearn.feature_selection import VarianceThreshold
-from sklearn import preprocessing
 import autocorrect
 # import gensim
 
@@ -28,34 +24,6 @@ def get_lowest_target(df:pd.DataFrame) -> list:
     scores = all_scores(df)
     return [min(s) for s in scores]
 
-def data_extract(config: dict = util.DEFAULT_CONFIG) -> pd.DataFrame:
-    df = pd.read_csv(util.FEEDBACK_DATA).drop(util.DROPTEST, axis=1)
-    df = df.fillna('')
-
-    for header in util.NAME_HEADERS:
-        if header in df:
-            dummies = pd.get_dummies(df[header])
-            df = pd.concat([df.drop([header], axis=1), dummies], axis=1)
-
-    df = supercomment(df)
-    # df = sep_comments(df)
-
-    for header in util.DATE_HEADERS:
-        if header in df:
-            df[header] = parse_date(df[header])
-
-    min_max_scaler = preprocessing.MinMaxScaler()
-    variance_scaler = VarianceThreshold(config['variance_threshold'])
-
-    kept_dates = list(set(util.DATE_HEADERS) - set(config['droplist']))
-    if kept_dates:
-        df[kept_dates] = min_max_scaler.fit_transform(df[kept_dates])
-    variance_scaler.fit(df)
-
-    retain = variance_scaler.get_support()
-    droppable_headers = [df.columns[x] for x, y in enumerate(retain) if not y]
-    df = df.drop(droppable_headers, axis=1)
-    return df
 
 def auto_correct(comments: list) -> list:
     try:
@@ -66,41 +34,6 @@ def auto_correct(comments: list) -> list:
         corrected = [[autocorrect.spell(word) for word in comment] for comment in comments]
         pickle.dump(corrected, open(util.AUTOCORRECT_PICKLE_FILE, 'wb'))
         return corrected
-
-
-def supercomment(df: pd.DataFrame):
-    df['supercomment'] = ""
-    for header in util.TEXT_HEADERS:
-        if header in df:
-            df['supercomment'] += df[header]
-    values = df['supercomment'].values
-    vectorizer = TfidfVectorizer(stop_words='english', min_df=util.MIN_DF)
-    tfidf_matrix = vectorizer.fit_transform(values).toarray()
-    featurenames = np.asarray(vectorizer.get_feature_names())
-    tfidf_frame = pd.DataFrame(tfidf_matrix, columns=featurenames)
-    df = df.drop(util.TEXT_HEADERS + ['supercomment'], axis=1)
-    df = pd.concat([df, tfidf_frame], axis=1)
-    return df
-
-
-def get_all_data() -> pd.DataFrame:
-    df = pd.read_csv(util.FEEDBACK_DATA)
-    df = df.fillna('')
-    return df
-
-def json_dependency_parse(comment, cache_file=util.VILDE_PICKLE_FILE):
-    cache = {}
-    try:
-        cache = pickle.load(open(cache_file, 'rb'))
-        if comment in cache:
-            return cache[comment]
-    except FileNotFoundError:
-        if not os.path.exists('pickles/'):
-            os.makedirs('pickles/')
-    response = requests.post(url="http://vilde.cs.lth.se:9000/en/default/api/json", data=comment).json()
-    cache[comment] = response['DM10']
-    pickle.dump(cache, open(cache_file, 'wb'))
-    return response['DM10']
 
 def dependency_parse(comment, cache_file=util.VILDE_PICKLE_FILE):
     cache = {}
@@ -116,11 +49,6 @@ def dependency_parse(comment, cache_file=util.VILDE_PICKLE_FILE):
     cache[comment] = response_frame
     pickle.dump(cache, open(cache_file, 'wb'))
     return response_frame
-
-
-def get_txt_lineset(filename: str) -> set:
-    with open(filename, 'r', encoding='utf-8') as datafile:
-        return set(x.strip() for x in datafile)
 
 
 def parse_word_vectors(filename:str) -> dict:
@@ -160,6 +88,25 @@ def compute_closest_words(vectors:dict, word, top:int) -> list:
     sorted_distances = sorted([(x,y) for x,y in enumerate(distances)], key=lambda x: x[1])
     closest = [keys[i] for i,j in sorted_distances[:top]]
     print(closest)
+
+def json_dependency_parse(comment, cache_file=util.VILDE_PICKLE_FILE):
+    cache = {}
+    try:
+        cache = pickle.load(open(cache_file, 'rb'))
+        if comment in cache:
+            return cache[comment]
+    except FileNotFoundError:
+        if not os.path.exists('pickles/'):
+            os.makedirs('pickles/')
+    response = requests.post(url="http://vilde.cs.lth.se:9000/en/default/api/json", data=comment).json()
+    cache[comment] = response['DM10']
+    pickle.dump(cache, open(cache_file, 'wb'))
+    return response['DM10']
+
+def get_txt_lineset(filename: str) -> set:
+    with open(filename, 'r', encoding='utf-8') as datafile:
+        return set(x.strip() for x in datafile)
+
 
 #import gensim first
 def create_word_embeddings(x:list) -> dict:

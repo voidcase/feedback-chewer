@@ -7,7 +7,7 @@ SCORE_TYPES = [
     'Machine operation',
     'DUO'
     ]
-NAME_HEADERS = ['Beamline', 'Department', 'User Affiliation']
+
 DATE_HEADERS = ['Experiment start', 'Experiment end', 'Report submitted']
 EXTERNAL_FACTOR_HEADERS = ['Department', 'User Affiliation'] + DATE_HEADERS
 
@@ -30,9 +30,6 @@ OWN_WORDVEC_PICKLE_FILE = 'pickles/ownwordvec.pickle'
 AUTOCORRECT_PICKLE_FILE = 'pickles/autocorrect.pickle'
 COEFF_PICKLE = 'pickles/coeff.pickle'
 STMTS_PICKLE = 'pickles/stmts.pickle'
-DROPTEST = ['Proposal'] + SCORE_TYPES + EXTERNAL_FACTOR_HEADERS + DATE_HEADERS
-TARGET = 'Overall'
-VARIANCE_THRESHOLD = 0.1
 MIN_DF= 0.01
 DEFAULT_CONFIG = {
     'target': 'Overall',
