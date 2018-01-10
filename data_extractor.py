@@ -59,8 +59,7 @@ def parse_word_vectors(filename:str) -> dict:
     except FileNotFoundError:
         with open(filename, 'r', encoding='utf-8') as datafile:
             print('no pickled word vectors found, filtering original corpus, this might take a while...')
-            #lines = [l for l in datafile][:100000]
-            lines = [l for l in datafile if l.split()[0] in all_words]
+            lines = [l for l in datafile][:100000]
             print('dbg: lines:', len(lines))
             vectors = {
                 line.split()[0]:
@@ -89,6 +88,7 @@ def compute_closest_words(vectors:dict, word, top:int) -> list:
     closest = [keys[i] for i,j in sorted_distances[:top]]
     print(closest)
 
+#used in dependency_sentimenter, but normal dependency_parse returns better format
 def json_dependency_parse(comment, cache_file=util.VILDE_PICKLE_FILE):
     cache = {}
     try:
