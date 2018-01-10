@@ -35,7 +35,6 @@ def keywords():
 def mentions():
     word = request.args.get('word')
     allstmts = {}
-    stmts = {}
     try:
         allstmts = pickle.load(open(util.STMTS_PICKLE, 'rb'))
         if word in allstmts:

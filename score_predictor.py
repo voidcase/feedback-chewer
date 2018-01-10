@@ -24,9 +24,7 @@ def make_models() -> dict:
     ]
 
     return {
-        label  : Pipeline(
-            [('embedding vectorizer')] + [(label, clf)]
-        )
+        label : Pipeline([(label, clf)])
         for label, clf in classifiers
     }
 
@@ -61,7 +59,7 @@ def cross_val(scoring = 'f1'):
                 df = amazon_data.get_set()
                 df = apply_transforms(df,['tokenizing','binarizing'] + transforms)
                 x, y = get_xy(df)
-                modeldict[transformlabel] = np.mean(cross_val_score(model, x, y, scoring=scoring))
+                modeldict[transformlabel] = np.mean(cross_val_score(model, x, y, scoring='f1'))
             writer.writerow(modeldict)
             print(modeldict)
 
@@ -102,5 +100,5 @@ def typefilter(types:list, string):
     return False
 
 if __name__ == '__main__':
-    cross_val('f1') # cross validate all models, generate csv file with scores
     cm_cross_val() # calculate confusion matrix
+    cross_val('f1') # cross validate all models, generate csv file with scores
