@@ -1,11 +1,10 @@
 import data_extractor
-from pprint import pprint
 
+#used in dependency_sentimenter
 class Comment:
     def __init__(self, sentence):
         self.sentence = sentence
         parsed = data_extractor.dependency_parse(sentence)
-        #pprint(parsed)
         if parsed['edges'] == []:
             self.connections = []
             self.properties = []

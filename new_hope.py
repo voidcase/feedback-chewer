@@ -1,9 +1,7 @@
 import maxiv_data
 from comment import Comment
 import pandas as pd
-from old_word_sentimenter import positivity, negativity, find_posi_nega_tokens
-from pprint import pprint
-from wordset import build_wordset
+from dependency_sentimenter import positivity, negativity, find_posi_nega_tokens
 import transforms
 import re
 
@@ -34,6 +32,15 @@ def surrounding_good_and_bad(keyword:str, df:pd.DataFrame):
     comments =  [Comment(statement['text']) for statement in statements]
     print('wrapped in comments')
     return [find_posi_nega_tokens(c) for c in comments]
+
+def build_wordset(dataset:pd.DataFrame, text_fields):
+    wordset = set()
+    for field in text_fields:
+        for comment in dataset[field]:
+            words = re.findall('\w+', comment)
+            for word in words:
+                wordset.add(word.lower())
+    return wordset
 
 def get_noun_scores() -> dict:
     df = maxiv_data.get_set()

@@ -21,7 +21,6 @@ def unify_text(df:pd.DataFrame) -> pd.DataFrame:
     df = df.drop(util.TEXT_HEADERS, axis=1)
     return df
 
-
 def split_scores_comments(df:pd.DataFrame) -> pd.DataFrame:
     dataframes = []
     df = df.replace(0, np.nan)

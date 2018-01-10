@@ -1,5 +1,5 @@
 from flask import Flask, render_template, jsonify, request
-from old_word_sentimenter import create_dict
+from dependency_sentimenter import create_dict
 from comment import Comment
 from score_predictor import get_coeffs
 from new_hope import statements_with
@@ -8,7 +8,6 @@ import maxiv_data
 from word_sentimenter import find_context
 import pickle
 import util
-import wordset
 
 app = Flask(__name__)
 df = maxiv_data.get_split_set()

@@ -24,11 +24,6 @@ def test_dep_parse():
     os.remove(filename)
 
 
-def test_sentimenter():
-    print('\nSENTIMENTER')
-    #annotated = ws.sentiment_annotate('We had problems with very low intensity all afternoon, but the food was nice')
-    #print(annotated)
-
 def test_wordvec_parser():
     print('\nWORDVEC PARSER')
     word_vectors = data_extractor.parse_word_vectors(util.WORDVEC_DATA)
@@ -57,17 +52,6 @@ def test_across_datasets():
     for label, score in scores.items():
         print(label,':',score)
 
-def test_print_example_predictions():
-    data = sp.apply_transforms(maxiv_data.get_set())
-    #non_empties = [comment for comment in x['supercomment'] if comment != []]
-    x, y = sp.get_xy(data)
-    models = sp.make_models(w2v=False,own=False)
-    x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.05)
-    for label, model in models.items():
-        model.fit(x_train, y_train)
-    print(data['text'][3:])
-    for label, model in models.items():
-        print(label, ':', model.predict(x_test.head(3)))
 
 def test_closest_words():
     word_vectors = data_extractor.parse_word_vectors(util.WORDVEC_DATA)
@@ -75,5 +59,5 @@ def test_closest_words():
 
 
 if __name__ == '__main__':
-    sp.cross_val()
+    sp.plot_cross_val()
     print('done!')

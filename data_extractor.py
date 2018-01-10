@@ -10,11 +10,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.feature_selection import VarianceThreshold
 from sklearn import preprocessing
 import autocorrect
-import wordset
 # import gensim
-from pprint import pprint
-from scipy.spatial.distance import cdist
-import json
 
 def all_scores(df:pd.DataFrame) -> list:
     num_rows = df.shape[0]
@@ -31,28 +27,6 @@ def get_avg_target(df:pd.DataFrame) -> list:
 def get_lowest_target(df:pd.DataFrame) -> list:
     scores = all_scores(df)
     return [min(s) for s in scores]
-
-def data_extract_comments(config=util.DEFAULT_CONFIG):
-    df = pd.read_csv(util.FEEDBACK_DATA)[util.TEXT_HEADERS + util.SCORE_TYPES]
-    #df = df.dropna(subset=util.TEXT_HEADERS, how='all')
-    df = df.fillna('')
-    df = df.drop(df[df['Overall'] == 0].index)
-    df['supercomment'] = ""
-    for header in util.TEXT_HEADERS:
-        df['supercomment'] += df[header]
-    df = df.drop(util.TEXT_HEADERS, axis=1)
-    df['supercomment'] = [split_text(comment) for comment in df['supercomment']]
-    # print(df['supercomment'])
-    y = binarize_scores(get_avg_target(df))
-    df = df.drop(util.SCORE_TYPES, axis=1)
-    return df, y
-
-def data_extract_tfidf_comments(config=util.DEFAULT_CONFIG):
-    df = data_extract_comments(config)[0]
-    values = df['supercomment'].values
-    vectorizer = TfidfVectorizer(stop_words=None, analyzer=lambda x: x)
-    tfidf_matrix = vectorizer.fit_transform(values).toarray()
-    return tfidf_matrix
 
 def data_extract(config: dict = util.DEFAULT_CONFIG) -> pd.DataFrame:
     df = pd.read_csv(util.FEEDBACK_DATA).drop(util.DROPTEST, axis=1)
@@ -109,27 +83,10 @@ def supercomment(df: pd.DataFrame):
     return df
 
 
-def tfidf_sep_comments(column, columname):
-    values = column.values
-    vectorizer = TfidfVectorizer(stop_words='english')
-    tfidf_matrix = vectorizer.fit_transform(values).toarray()
-    featurenames = np.asarray(vectorizer.get_feature_names())
-    tfidf_frame = pd.DataFrame(tfidf_matrix, columns=featurenames)
-    tfidf_frame.rename(columns=lambda x: x + columname, inplace=True)
-    return tfidf_frame
-
-
 def get_all_data() -> pd.DataFrame:
     df = pd.read_csv(util.FEEDBACK_DATA)
     df = df.fillna('')
     return df
-
-
-def parse_date(column):
-    column = pd.to_datetime(column)
-    column = [t.value // 10 ** 9 for t in column]
-    return column
-
 
 def json_dependency_parse(comment, cache_file=util.VILDE_PICKLE_FILE):
     cache = {}
@@ -192,6 +149,7 @@ def normalize_vector(vector:list) -> list:
     else:
         return vector / norm
 
+#to check if embeddings make sense
 def compute_closest_words(vectors:dict, word, top:int) -> list:
     items = vectors.items()
     keys = [vect[0] for vect in items]
@@ -203,6 +161,7 @@ def compute_closest_words(vectors:dict, word, top:int) -> list:
     closest = [keys[i] for i,j in sorted_distances[:top]]
     print(closest)
 
+#import gensim first
 def create_word_embeddings(x:list) -> dict:
     try:
         cache = pickle.load(open(util.OWN_WORDVEC_PICKLE_FILE, 'rb'))

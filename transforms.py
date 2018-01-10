@@ -1,19 +1,15 @@
 import pandas as pd
 import numpy as np
 import data_extractor
-import wordset
 import util
 import autocorrect
 import pickle
-import sys
 import os
 import re
-from old_word_sentimenter import find_posi_nega_tokens
-from comment import Comment
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 def _split_text(comment:str) -> list:
-    return [c.lower() for c in wordset.tokenize(comment)]
+    return [c.lower() for c in re.findall('\w+', comment)]
 
 def token_transform(df:pd.DataFrame) -> pd.DataFrame:
     """
@@ -75,13 +71,6 @@ def auto_correct_transform(df:pd.DataFrame) -> pd.DataFrame:
     pickle.dump(cache,open(util.AUTOCORRECT_PICKLE_FILE, 'wb'))
     return ret
 
-def posinega_count_transform(df:pd.DataFrame) -> pd.DataFrame:
-    """
-    :param df: req text
-    :return: +posi_count, +nega_count
-    """
-    pairs = df.apply(lambda row: find_posi_nega_tokens(Comment(df['text'])), axis=1)
-    # NOT DONE
 
 def sentence_split_transform(df:pd.DataFrame) -> pd.DataFrame:
     """
@@ -97,12 +86,4 @@ def sentence_split_transform(df:pd.DataFrame) -> pd.DataFrame:
             ret = pd.concat([ret, pd.DataFrame([new_row])],ignore_index=True)
     return ret
 
-def test_sentence_split_transform():
-    import maxiv_data
-    df = maxiv_data.get_split_set()
-    #df = pd.DataFrame([['Here is a sentence! Here is another.', 4]], columns=['text','score'])
-    df = sentence_split_transform(df)
-    print(df)
 
-if __name__ == '__main__':
-    test_sentence_split_transform()

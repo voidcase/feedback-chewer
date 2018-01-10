@@ -3,7 +3,6 @@ import pandas as pd
 import re
 
 def find_context(comment:str, keyword:str) -> list:
-    #print('comment:', comment, 'keyword:', keyword)
     df = data.dependency_parse(comment)
     keywords = re.split(' ', keyword)
     keyword_rows = []
@@ -28,7 +27,6 @@ def find_context(comment:str, keyword:str) -> list:
                   |
                   ( (df['head'] == head) &  #compounds
                     ( (df['deprel'] == 'compound') |
-                      # (df['deprel'] ==  'nmod')
                       (df['deprel'] == 'dep')
                     )
                   )
