@@ -1,20 +1,18 @@
-import numpy as np
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import cross_val_score, cross_val_predict, train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier
-import csv
-from pandas_ml import ConfusionMatrix
 from sklearn.naive_bayes import GaussianNB
 from sklearn import svm
 from sklearn.metrics import accuracy_score, f1_score
-from data_extractor import dependency_parse
+import numpy as np
 import pandas as pd
+import csv
+from pandas_ml import ConfusionMatrix
+from data_extractor import dependency_parse
 import matplotlib.pyplot as plt
-import maxiv_data
-import amazon_data
+import maxiv_data, amazon_data
 import transforms as tf
-
 
 def make_models() -> dict:
     classifiers = [
@@ -36,7 +34,6 @@ def get_xy(model:pd.DataFrame) -> (pd.DataFrame, pd.Series):
     x = model.drop([h for h in model if h in ['text','tokens','score']], axis=1)
     y = model['score']
     return x,y
-
 
 def apply_transforms(df:pd.DataFrame,transforms:list) -> pd.DataFrame:
     for label, transform in [
