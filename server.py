@@ -1,9 +1,8 @@
 from flask import Flask, render_template, jsonify, request
 from score_predictor import get_coeffs
-from new_hope import statements_with
 from transforms import sentence_split_transform
 import maxiv_data
-from word_sentimenter import find_context
+from word_sentimenter import find_context, statements_with
 import pickle
 import util
 

@@ -37,7 +37,6 @@ def get_xy(model:pd.DataFrame) -> (pd.DataFrame, pd.Series):
 
 def apply_transforms(df:pd.DataFrame,transforms:list) -> pd.DataFrame:
     for label, transform in [
-        #('sentencing',tf.sentence_split_transform),
         ('tokenizing',tf.token_transform),
         ('binarizing',tf.binarize_transform),
         ('tfidf', tf.tfidf_transform),
@@ -48,7 +47,7 @@ def apply_transforms(df:pd.DataFrame,transforms:list) -> pd.DataFrame:
             df = transform(df)
     return df
 
-def cross_val():
+def cross_val(scoring = 'f1'):
     with open('plots/real_amazon_f1scores.csv', 'w') as csvfile:
         fieldnames = ['classifier', 'tfidf', 'embedding','tfidf+embedding']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -62,27 +61,26 @@ def cross_val():
                 df = amazon_data.get_set()
                 df = apply_transforms(df,['tokenizing','binarizing'] + transforms)
                 x, y = get_xy(df)
-                modeldict[transformlabel] = np.mean(cross_val_score(model, x, y, scoring='f1'))
+                modeldict[transformlabel] = np.mean(cross_val_score(model, x, y, scoring=scoring))
             writer.writerow(modeldict)
             print(modeldict)
 
-def plot_cross_val():
+def cm_cross_val():
     for label, transforms in [('tfidf', ['tfidf']),
-                              # ('embedding',['embedding']),
-                              # ('tfidf_embedding', ['tfidf', 'embedding'])
+                              ('embedding',['embedding']),
+                              ('tfidf_embedding', ['tfidf', 'embedding'])
                               ]:
         df = amazon_data.get_set()
         df = apply_transforms(df,['tokenizing', 'binarizing'] + transforms)
         x, y = get_xy(df)
         lr = LogisticRegression()
         predicted = cross_val_predict(lr,x,y)
-        print(predicted)
         confusion_matrix = ConfusionMatrix(y, predicted)
-        print(confusion_matrix)
-        print(f1_score(y,predicted))
+        print('confusion matrix:', confusion_matrix)
         confusion_matrix.plot()
         plt.show()
 
+# used by server
 def get_coeffs(types=['adverbs','adjectives', 'verbs', 'nouns']):
     df = maxiv_data.get_split_set()
     df = apply_transforms(df,['tokenizing', 'autocorrect', 'binarizing', 'tfidf'])
@@ -94,6 +92,7 @@ def get_coeffs(types=['adverbs','adjectives', 'verbs', 'nouns']):
     filtered_tups = filter(lambda x : typefilter(types, x[1]), tups)
     return sorted(list(filtered_tups))
 
+# used by server
 def typefilter(types:list, string):
     dict = {'adverbs': 'ADV', 'adjectives': 'ADJ', 'verbs': 'VERB', 'nouns': 'NOUN'}
     postags = [dict[type] for type in types]
@@ -102,20 +101,6 @@ def typefilter(types:list, string):
         if row['cpostag'] in postags: return True
     return False
 
-def cross_dataset_eval():
-    train = amazon_data.get_set()
-    test = maxiv_data.get_set()
-    print('loaded datasets')
-    train = apply_transforms(train)
-    test = apply_transforms(test)
-    print('applied transforms')
-    train_x, train_y = get_xy(train)
-    test_x, test_y = get_xy(test)
-    models = make_models()
-    scores = {}
-    for label, model in models.items():
-        print('training',label,'...')
-        model.fit(train_x,train_y)
-        pred_y = model.predict(test_x)
-        scores[label] = accuracy_score(test_y, pred_y)
-    return scores
+if __name__ == '__main__':
+    cross_val('f1') # cross validate all models, generate csv file with scores
+    cm_cross_val() # calculate confusion matrix
